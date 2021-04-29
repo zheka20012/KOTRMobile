@@ -1,0 +1,15 @@
+# Unity3D generated meta files
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
+
+# Visual Studio cache directory
+.vs/
+
+/**/*.meta
+
+# Temporary auto-generated Android Assets
+/[Ss]treamingAssets/aa.meta
+/[Ss]treamingAssets/aa/*
+
+/[Pp]lugins/[Gg]it[Hh]ub/*
