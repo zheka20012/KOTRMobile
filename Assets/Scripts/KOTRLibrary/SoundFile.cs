@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace KOTRLibrary
 {
-    public class SoundFile : IBinaryReadable, IResourceItem
+    public class SoundFile : IBinaryReadable
     {
         private byte[] WAVData;
 

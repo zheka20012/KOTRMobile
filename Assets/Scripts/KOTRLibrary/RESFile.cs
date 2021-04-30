@@ -35,11 +35,11 @@ namespace KOTRLibrary
             }
         }
 
-        public struct SectionInfo : IBinaryReadable
+        public struct SectionInfo<T> : IBinaryReadable
         {
             public string Name;
             public uint Size;
-            public IResourceItem Item;
+            public T Item;
 
             /// <inheritdoc />
             public void Read(BinaryReader reader)
@@ -51,9 +51,9 @@ namespace KOTRLibrary
 
         public List<float> Colors;
 
-        public List<SectionInfo> Palettes;
-        public List<SectionInfo> SoundFiles;
-        public List<SectionInfo> TextureFiles;
+        public List<SectionInfo<Palette>> Palettes;
+        public List<SectionInfo<SoundFile>> SoundFiles;
+        public List<SectionInfo<KOTRTexture>> TextureFiles;
 
         public static RESFile OpenFile(string filePath)
         {
@@ -138,11 +138,11 @@ namespace KOTRLibrary
 
         public void ReadPalettes(BinaryReader reader, uint count)
         {
-            Palettes = new List<SectionInfo>();
+            Palettes = new List<SectionInfo<Palette>>();
 
             for (int i = 0; i < count; i++)
             {
-                var sInfo = reader.Read<SectionInfo>();
+                var sInfo = reader.Read<SectionInfo<Palette>>();
                 sInfo.Item = reader.Read<Palette>();
                 Palettes.Add(sInfo);
             }
@@ -152,11 +152,11 @@ namespace KOTRLibrary
 
         public void ReadSoundFiles(BinaryReader reader, uint count)
         {
-            SoundFiles = new List<SectionInfo>();
+            SoundFiles = new List<SectionInfo<SoundFile>>();
 
             for (int i = 0; i < count; i++)
             {
-                var sInfo = reader.Read<SectionInfo>();
+                var sInfo = reader.Read<SectionInfo<SoundFile>>();
                 sInfo.Item = reader.Read<SoundFile>();
                 SoundFiles.Add(sInfo);
             }
@@ -166,12 +166,12 @@ namespace KOTRLibrary
 
         public void ReadTextureFiles(BinaryReader reader, uint count)
         {
-            TextureFiles = new List<SectionInfo>();
+            TextureFiles = new List<SectionInfo<KOTRTexture>>();
 
             for (int i = 0; i < count; i++)
             {
                
-                var sInfo = reader.Read<SectionInfo>();
+                var sInfo = reader.Read<SectionInfo<KOTRTexture>>();
                 long tempPos = reader.BaseStream.Position; //TODO: Implement full TXR and MSK support
                 sInfo.Item = reader.Read<KOTRTexture>();
                 TextureFiles.Add(sInfo);

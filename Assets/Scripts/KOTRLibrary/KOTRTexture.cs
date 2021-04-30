@@ -9,7 +9,7 @@ namespace KOTRLibrary
     /// <summary>
     /// TXR Texture format from king
     /// </summary>
-    public partial class KOTRTexture : IBinaryReadable, IResourceItem
+    public partial class KOTRTexture : IBinaryReadable
     {
 
         public Texture2D Texture;
@@ -57,8 +57,9 @@ namespace KOTRLibrary
                 {
                     if (section == "LVMP")
                     {
-                        reader.BaseStream.Seek(4, SeekOrigin.Current); //At now we don't need size
+                        reader.BaseStream.Seek(reader.ReadUInt32(), SeekOrigin.Current); //At now we don't need mipmaps
 
+#if false
                         var mipmapCount = reader.ReadUInt32();
                         var w = reader.ReadUInt32();
                         var h = reader.ReadUInt32();
@@ -112,8 +113,10 @@ namespace KOTRLibrary
                             }
                         }
 
-                        reader.BaseStream.Seek(6, SeekOrigin.Current);
+                        reader.BaseStream.Seek(2, SeekOrigin.Current);
                         Debug.Log(reader.BaseStream.Position);
+#endif
+                        reader.BaseStream.Seek(4, SeekOrigin.Current);
                     }
                     else
                     {

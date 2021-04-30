@@ -144,12 +144,12 @@ namespace World.Editor
 
         private class PaletteGUI
         {
-            private RESFile.SectionInfo Info;
+            private RESFile.SectionInfo<Palette> Info;
 
             private bool IsOpen;
             private bool IsColorsOpen;
 
-            public PaletteGUI(RESFile.SectionInfo info)
+            public PaletteGUI(RESFile.SectionInfo<Palette> info)
             {
                 Info = info;
             }
@@ -161,7 +161,7 @@ namespace World.Editor
                 if (IsOpen)
                 {
                     EditorGUI.indentLevel++;
-                    Palette palette = (Palette) Info.Item;
+                    Palette palette = Info.Item;
 
                     if (palette.PaletteColors != null)
                     {

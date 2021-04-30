@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace KOTRLibrary
 {
-    public class Palette : IBinaryReadable, IResourceItem
+    public class Palette : IBinaryReadable
     {
         public Color[] PaletteColors;
         
