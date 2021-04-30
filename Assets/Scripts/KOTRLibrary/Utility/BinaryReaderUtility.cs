@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 
@@ -14,9 +15,27 @@ namespace KOTRLibrary
         /// <returns></returns>
         public static string Read32ByteString(this BinaryReader reader)
         {
-            string result = System.Text.Encoding.Default.GetString(reader.ReadBytes(32));
+            string result = System.Text.Encoding.UTF8.GetString(reader.ReadBytes(32));
             
             return result.Replace(_NullTerminator, "");
+        }
+
+        public static string GetString(this byte[] bytes)
+        {
+            return System.Text.Encoding.UTF8.GetString(bytes);
+        }
+
+        public static string ReadCString(this BinaryReader reader)
+        {
+            List<byte> stringChars = new List<byte>();
+
+            byte c;
+            while ((c = reader.ReadByte()) != 0)
+            {
+                stringChars.Add(c);
+            }
+
+            return System.Text.Encoding.UTF8.GetString(stringChars.ToArray());
         }
 
         public static T ReadStruct<T>(this BinaryReader reader)

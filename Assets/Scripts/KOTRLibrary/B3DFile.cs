@@ -20,8 +20,6 @@ namespace KOTRLibrary
             Block_Start = 333,
             Block_Separator = 444,
             Block_End = 555,
-
-
         }
 
         public List<string> MaterialLibrary;
