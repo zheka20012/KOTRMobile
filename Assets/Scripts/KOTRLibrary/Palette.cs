@@ -31,7 +31,7 @@ namespace KOTRLibrary
 
         }
 
-        private void ReadPalette(BinaryReader reader)
+        public void ReadPalette(BinaryReader reader)
         {
             PaletteColors = new Color[256];
 

@@ -121,7 +121,9 @@ namespace World.Editor
                     EditorGUILayout.LabelField($"Format: {tex.Texture.format:G}", EditorStyles.boldLabel);
                     EditorGUILayout.EndVertical();
                     EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth((width / 2) + 20));
-                    EditorGUILayout.HelpBox(new GUIContent(tex.Texture));
+                    Rect layoutRect = EditorGUILayout.GetControlRect(GUILayout.Height(128));
+                    EditorGUI.DrawTextureTransparent(layoutRect, tex.Texture,ScaleMode.ScaleToFit);
+                    //EditorGUILayout.HelpBox(new GUIContent(tex.Texture));
                     EditorGUILayout.EndHorizontal();
                     EditorGUILayout.EndHorizontal();
                     EditorGUILayout.EndVertical();

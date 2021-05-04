@@ -54,6 +54,7 @@ namespace KOTRLibrary
         public List<SectionInfo<Palette>> Palettes;
         public List<SectionInfo<SoundFile>> SoundFiles;
         public List<SectionInfo<KOTRTexture>> TextureFiles;
+        public List<SectionInfo<KOTRMask>> MaskFiles;
 
         public static RESFile OpenFile(string filePath)
         {
@@ -84,6 +85,7 @@ namespace KOTRLibrary
                         case SectionType.BACKFILES:
                             break;
                         case SectionType.MASKFILES:
+                            file.ReadMaskFiles(reader, header.Count);
                             break;
                         case SectionType.MATERIALS:
                             file.ReadMaterials(reader, header.Count);
@@ -175,6 +177,22 @@ namespace KOTRLibrary
                 long tempPos = reader.BaseStream.Position; //TODO: Implement full TXR and MSK support
                 sInfo.Item = reader.Read<KOTRTexture>();
                 TextureFiles.Add(sInfo);
+                reader.BaseStream.Seek(sInfo.Size + tempPos, SeekOrigin.Begin);
+            }
+
+            Debug.Log("Texture Files Loaded!");
+        }
+
+        public void ReadMaskFiles(BinaryReader reader, uint count)
+        {
+            MaskFiles = new List<SectionInfo<KOTRMask>>();
+
+            for (int i = 0; i < count; i++)
+            {
+                var sInfo = reader.Read<SectionInfo<KOTRMask>>();
+                long tempPos = reader.BaseStream.Position; //TODO: Implement full MSK support
+                //sInfo.Item = reader.Read<KOTRTexture>();
+                MaskFiles.Add(sInfo);
                 reader.BaseStream.Seek(sInfo.Size + tempPos, SeekOrigin.Begin);
             }
 
