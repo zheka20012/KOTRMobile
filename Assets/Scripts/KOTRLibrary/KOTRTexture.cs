@@ -11,7 +11,7 @@ namespace KOTRLibrary
     /// </summary>
     public partial class KOTRTexture : IBinaryReadable
     {
-        protected struct PixelFormatMask : IBinaryReadable
+        public struct PixelFormatMask : IBinaryReadable
         {
             public uint RedMask;
             public uint GreenMask;
@@ -30,9 +30,58 @@ namespace KOTRLibrary
 
                 reader.BaseStream.Seek(blockSize, SeekOrigin.Begin);
             }
+
+            public KOTRTextureFormat GetTextureFormat()
+            {
+                if (BlueMask == 0x1F)
+                {
+
+                    if (GreenMask == 0x7E0 && RedMask == 0xF800 && AlphaMask == 0x0)
+                    {
+                        return KOTRTextureFormat.RGB565;
+                    }
+
+                    if (GreenMask == 0x3E0 && RedMask == 0x7C00 && AlphaMask == 0)
+                    {
+                        return KOTRTextureFormat.RGB555;
+                    }
+                }
+                else if (BlueMask == 0xF && GreenMask == 0xF0 && RedMask == 0xF00 && AlphaMask == 0xF000)
+                {
+                    return KOTRTextureFormat.ARGB4444;
+                }
+                else if (BlueMask == 0xFF && GreenMask == 0xFF00 && RedMask == 0xFF0000)
+                {
+                    if (AlphaMask == 0)
+                    {
+                        return KOTRTextureFormat.RGB888;
+                    }
+
+                    return KOTRTextureFormat.RGBA8888;
+                }
+
+                Debug.Log($"Unknown texture format: R: 0x{RedMask:x}, G: 0x{GreenMask:x}, B: 0x{BlueMask:x}, A: 0x{AlphaMask:x}");
+                return KOTRTextureFormat.Unknown;
+            }
         }
 
-        public Texture2D Texture;
+        public Texture2D Texture
+        {
+            get
+            {
+                if (_InternalTexture == null)
+                {
+                    CreateTexture();
+                }
+
+                return _InternalTexture;
+            }
+        }
+
+        private Texture2D _InternalTexture;
+        private PixelFormatMask _PixelFormatMask;
+        private byte[] _ImageData;
+        private ushort Width, Height;
 
         /// <inheritdoc />
         public virtual void Read(BinaryReader reader)
@@ -41,8 +90,8 @@ namespace KOTRLibrary
 
             reader.BaseStream.Seek(12, SeekOrigin.Current);
 
-            short width = reader.ReadInt16();
-            short height = reader.ReadInt16();
+            Width = reader.ReadUInt16();
+            Height = reader.ReadUInt16();
             int bitDepth = reader.ReadByte();
 
             reader.BaseStream.Seek(1, SeekOrigin.Current);
@@ -55,24 +104,20 @@ namespace KOTRLibrary
                     return;
                 }
 
-                uint sectionSize = reader.ReadUInt32();
+                reader.ReadUInt32();
                 uint offset = reader.ReadUInt32();
 
-                Texture = new Texture2D(width, height, TextureFormat.ARGB4444, false);
-
-                var imageData = reader.ReadBytes(width * height * 2);
+                _ImageData = reader.ReadBytes(Width * Height * 2);
 
                 reader.BaseStream.Seek(offset+filePosition, SeekOrigin.Begin);
 
                 string section = reader.ReadBytes(4).GetString();
-
-                var mipmaps = new List<byte[]>();
-
+                
                 if (section != "PFRM")
                 {
                     if (section == "LVMP")
                     {
-                        reader.BaseStream.Seek(reader.ReadUInt32(), SeekOrigin.Current); //At now we don't need mipmaps
+                        reader.BaseStream.Seek(reader.ReadUInt32()+6, SeekOrigin.Current); //At now we don't need mipmaps
 
 #if false
                         var mipmapCount = reader.ReadUInt32();
@@ -131,107 +176,39 @@ namespace KOTRLibrary
                         reader.BaseStream.Seek(2, SeekOrigin.Current);
                         Debug.Log(reader.BaseStream.Position);
 #endif
-                        Debug.Log(reader.ReadBytes(4).GetString());
                     }
                     else
                     {
-                        Debug.LogError($"PFRM not found at pos: {reader.BaseStream.Position}!");
+                        Debug.Log($"PFRM not found at pos: {reader.BaseStream.Position}!");
                         return;
                     }
                 }
 
-                PixelFormatMask pfrm = reader.Read<PixelFormatMask>();
-
-                TextureFormat outFormat = TextureFormat.RGB565;
-
-                if (pfrm.RedMask == 0xF800 && pfrm.GreenMask == 0x7E0 && pfrm.BlueMask == 0x1F)
-                {
-                    outFormat = TextureFormat.RGB24;
-                    imageData = GetRGBTexture(imageData, pfrm);
-                }
-                else if(pfrm.RedMask == 0xF00 && pfrm.GreenMask == 0xF0 && pfrm.BlueMask == 0xF && pfrm.AlphaMask == 0xF000)
-                {
-                    outFormat = TextureFormat.RGBA32;
-                    imageData = GetARGBTexture(imageData, pfrm);
-                }
-                else if(pfrm.RedMask == 0x7c00 && pfrm.GreenMask == 0x3e0 && pfrm.BlueMask == 0x1f)
-                {
-                   outFormat = TextureFormat.RGB24;
-				   imageData = Get555RGBTexture(imageData, pfrm);
-                }
-
-                Texture = new Texture2D(width, height, outFormat, false);
-
-                Texture.LoadRawTextureData(imageData);
-
-                Texture.Apply(false, false);
+                _PixelFormatMask = reader.Read<PixelFormatMask>();
             }
         }
 
-        protected byte[] GetRGBTexture(byte[] textureBytes, PixelFormatMask pixelFormatMask)
+        private void CreateTexture()
         {
-            byte[] rgbTextureBytes = new byte[textureBytes.Length/2 * 3];
+            TextureUtility.TextureBytesConverter converter;
 
-            for (int i = 0, j = 0; i < textureBytes.Length; i+=2)
+            try
             {
-                short c = BitConverter.ToInt16(textureBytes, i);
-                rgbTextureBytes[j++] = (byte)(((c & pixelFormatMask.RedMask) >> 11) << 3);
-                rgbTextureBytes[j++] = (byte)(((c & pixelFormatMask.GreenMask) >> 5) << 2);
-                rgbTextureBytes[j++] = (byte)((c & pixelFormatMask.BlueMask) << 3);
+                converter = TextureUtility.TextureBytesConverter.GetConverter(_PixelFormatMask.GetTextureFormat());
             }
-
-            return rgbTextureBytes;
-        }
-		
-		protected byte[] Get555RGBTexture(byte[] textureBytes, PixelFormatMask pixelFormatMask)
-        {
-            byte[] rgbTextureBytes = new byte[textureBytes.Length/2 * 3];
-
-            for (int i = 0, j = 0; i < textureBytes.Length; i+=2)
+            catch (Exception e)
             {
-                short c = BitConverter.ToInt16(textureBytes, i);
-                rgbTextureBytes[j++] = (byte)(((c & pixelFormatMask.RedMask) >> 10)  << 3);
-                rgbTextureBytes[j++] = (byte)(((c & pixelFormatMask.GreenMask) >> 5) << 3);
-                rgbTextureBytes[j++] = (byte)((c & pixelFormatMask.BlueMask) 		 << 3);
+                _InternalTexture = Texture2D.whiteTexture;
+                return;
             }
+            
+            _InternalTexture = new Texture2D(Width, Height, converter.UnityTextureFormat, false);
 
-            return rgbTextureBytes;
+            _InternalTexture.LoadRawTextureData(converter.FlipBytes(converter.ConvertBytes(_ImageData, _PixelFormatMask), Width, Height));
+
+            _InternalTexture.Apply(false, false);
+
         }
 
-        protected byte[] GetARGBTexture(byte[] textureBytes, PixelFormatMask pixelFormatMask)
-        {
-            byte[] rgbTextureBytes = new byte[textureBytes.Length / 2 * 4];
-
-            for (int i = 0, j = 0; i < textureBytes.Length; i += 2)
-            {
-                 
-                short c = BitConverter.ToInt16(textureBytes, i);
-                rgbTextureBytes[j++] = (byte)(((c & pixelFormatMask.RedMask) >> 8)  << 4);
-                rgbTextureBytes[j++] = (byte)(((c & pixelFormatMask.GreenMask) >> 4) << 4);
-                rgbTextureBytes[j++] = (byte)(((c & pixelFormatMask.BlueMask)      ) << 4);
-                rgbTextureBytes[j++] = (byte)(((c & pixelFormatMask.AlphaMask) >> 12) << 4);
-
-            }
-
-            return rgbTextureBytes;
-        }
-
-        protected byte[] GetNativeARGB(byte[] textureBytes, PixelFormatMask pixelFormatMask)
-        {
-            byte[] rgbTextureBytes = new byte[textureBytes.Length / 2 * 4];
-
-            for (int i = 0, j = 0; i < textureBytes.Length; i += 2)
-            {
-
-                short c = BitConverter.ToInt16(textureBytes, i);
-                rgbTextureBytes[j++] = (byte)(((c & pixelFormatMask.RedMask) >> 8) << 4);
-                rgbTextureBytes[j++] = (byte)(((c & pixelFormatMask.GreenMask) >> 4) << 4);
-                rgbTextureBytes[j++] = (byte)(((c & pixelFormatMask.BlueMask)) << 4);
-                rgbTextureBytes[j++] = (byte)(((c & pixelFormatMask.AlphaMask) >> 12) << 4);
-
-            }
-
-            return rgbTextureBytes;
-        }
     }
 }

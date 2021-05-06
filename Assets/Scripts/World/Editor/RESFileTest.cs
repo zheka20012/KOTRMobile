@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace World.Editor
 {
-    public class RESFileTest : EditorWindow
+    public class RESFileTest : EditorWindow, ISerializationCallbackReceiver
     {
         [MenuItem("KOTR/Run RES Test")]
         private static void ShowWindow()
@@ -54,6 +54,22 @@ namespace World.Editor
             if (file == null && !IsOpen)
             {
                 EditorGUILayout.LabelField("RES file not loaded!");
+                return;
+            }
+
+            if (GUILayout.Button("Close"))
+            {
+
+                for (int i = 0; i < PaletteGuis.Count; i++)
+                {
+                    PaletteGuis[i] = null;
+                }
+
+                PaletteGuis.Clear();
+                IsOpen = false;
+
+                file = null;
+
                 return;
             }
 
@@ -212,6 +228,18 @@ namespace World.Editor
                 null,
                 new object[] { clip, startSample, loop }
             );
+        }
+
+        /// <inheritdoc />
+        public void OnBeforeSerialize()
+        {
+            
+        }
+
+        /// <inheritdoc />
+        public void OnAfterDeserialize()
+        {
+            file = null;
         }
     }
 }
