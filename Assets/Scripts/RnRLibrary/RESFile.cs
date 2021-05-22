@@ -50,13 +50,28 @@ namespace RnRLibrary
             }
         }
 
-        public List<float> Colors;
+        public List<float> Colors { get; private set; }
 
-        public List<SectionInfo<Palette>> Palettes;
-        public List<SectionInfo<SoundFile>> SoundFiles;
-        public List<SectionInfo<RnRTexture>> TextureFiles;
-        public List<SectionInfo<Mask>> MaskFiles;
-        public List<Material> Materials;
+        public List<SectionInfo<Palette>> Palettes { get; private set; }
+        public List<SectionInfo<SoundFile>> SoundFiles { get; private set; }
+        public List<SectionInfo<RnRTexture>> TextureFiles { get; private set; }
+        public List<SectionInfo<Mask>> MaskFiles { get; private set; }
+
+        public List<RnRMaterial> Materials
+        {
+            get
+            {
+                if (!_MaterialsCreated)
+                {
+                    InitMaterials();
+                }
+                return _Materials;
+            }
+        }
+
+        private bool _MaterialsCreated = false;
+
+        private List<RnRMaterial> _Materials;
 
         public static RESFile OpenFile(string filePath)
         {
@@ -104,6 +119,16 @@ namespace RnRLibrary
             }
         }
 
+        private void InitMaterials()
+        {
+            for (int i = 0; i < _Materials.Count; i++)
+            {
+                _Materials[i].InitMaterial(this);
+            }
+
+            _MaterialsCreated = true;
+        }
+
         public void ReadColors(BinaryReader reader, uint count)
         {
             Colors = new List<float>();
@@ -116,32 +141,13 @@ namespace RnRLibrary
 
         public void ReadMaterials(BinaryReader reader, uint count)
         {
-            Materials = new List<Material>();
+            _Materials = new List<RnRMaterial>();
 
             for (uint i = 0; i < count; i++)
             {
-                Material mat = new Material(Shader.Find("Legacy Shaders/Diffuse"));
+                string materialData = reader.ReadCString();
 
-                string[] materialData = reader.ReadCString().Split(new char[] {' '});
-
-                mat.name = materialData[0];
-
-                for (int j = 1; j < materialData.Length; j+=2)
-                {
-                    //TODO: Maybe add some abstraction...
-                    switch (materialData[i])
-                    {
-                        case "col":
-                            
-                            break;
-                        case "transp":
-                            break;
-                        case "tex":
-                            break;
-                    }
-                }
-
-                Materials.Add(mat);
+                _Materials.Add(new RnRMaterial(materialData));
             }
         }
 

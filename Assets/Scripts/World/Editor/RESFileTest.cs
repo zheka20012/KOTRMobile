@@ -23,6 +23,7 @@ namespace World.Editor
         private bool IsOpen = false;
 
         private List<PaletteGUI> PaletteGuis = new List<PaletteGUI>();
+        private List<MaterialGUI> MaterialsGUI = new List<MaterialGUI>();
 
         private void OnGUI()
         {
@@ -43,10 +44,16 @@ namespace World.Editor
                 file = RESFile.OpenFile(FilePath);
 
                 PaletteGuis.Clear();
+                MaterialsGUI.Clear();
 
                 for (int i = 0; i < file.Palettes.Count; i++)
                 {
                     PaletteGuis.Add(new PaletteGUI(file.Palettes[i]));
+                }
+
+                for (int i = 0; i < file.Materials.Count; i++)
+                {
+                    MaterialsGUI.Add(new MaterialGUI(file.Materials[i]));
                 }
 
                 IsOpen = true;
@@ -66,7 +73,13 @@ namespace World.Editor
                     PaletteGuis[i] = null;
                 }
 
+                for (int i = 0; i < MaterialsGUI.Count; i++)
+                {
+                    MaterialsGUI[i].Destroy();
+                }
+
                 PaletteGuis.Clear();
+                MaterialsGUI.Clear();
                 IsOpen = false;
 
                 file = null;
@@ -157,11 +170,9 @@ namespace World.Editor
                 MaterialsScrollPos = EditorGUILayout.BeginScrollView(MaterialsScrollPos);
                 EditorGUILayout.BeginVertical();
                 EditorGUI.indentLevel++;
-                for (int i = 0; i < file.Materials.Count; i++)
+                for (int i = 0; i < MaterialsGUI.Count; i++)
                 {
-                    EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-               
-                    EditorGUILayout.EndVertical();
+                    MaterialsGUI[i].OnGUI();
                 }
                 EditorGUILayout.EndVertical();
                 EditorGUILayout.EndScrollView();
@@ -187,7 +198,6 @@ namespace World.Editor
             private RESFile.SectionInfo<Palette> Info;
 
             private bool IsOpen;
-            private bool IsColorsOpen;
 
             public PaletteGUI(RESFile.SectionInfo<Palette> info)
             {
@@ -205,29 +215,22 @@ namespace World.Editor
 
                     if (palette.PaletteColors != null)
                     {
-                        IsColorsOpen = EditorGUILayout.Foldout(IsColorsOpen,"Show Colors");
-
-                        if (IsColorsOpen)
+                        var oldColor = GUI.color;
+                        float width = (EditorGUIUtility.currentViewWidth-64)/16f;
+                        EditorGUILayout.BeginVertical();
+                        for (int i = 0; i < 16; i++)
                         {
-                            var oldColor = GUI.color;
-                            GUILayout.BeginHorizontal();
-                            GUILayout.Space(EditorGUI.indentLevel * 20);
-                            EditorGUILayout.BeginVertical();
-                            for (int i = 0; i < 16; i++)
+                            EditorGUILayout.BeginHorizontal();
+                            for (int j = 0; j < 16; j++)
                             {
-                                EditorGUILayout.BeginHorizontal();
-                                for (int j = 0; j < 16; j++)
-                                {
-                                    GUI.color = palette.PaletteColors[(i * 16) + j];
-                                    GUILayout.Box(GUIContent.none,GUILayout.Width(10), GUILayout.Height(10));
-                                }
-                                EditorGUILayout.EndHorizontal();
+                                GUI.color = palette.PaletteColors[(i * 16) + j];
+                                GUILayout.Box(GUIContent.none,GUILayout.MaxWidth(width), GUILayout.MaxHeight(width));
                             }
-                            EditorGUILayout.EndVertical();
                             EditorGUILayout.EndHorizontal();
-
-                            GUI.color = oldColor;
                         }
+                        EditorGUILayout.EndVertical();
+
+                        GUI.color = oldColor;
                     }
 
                     EditorGUI.indentLevel--;
@@ -235,6 +238,48 @@ namespace World.Editor
             }
         }
 
+        private class MaterialGUI
+        {
+            private UnityEditor.Editor Editor;
+
+            private RnRMaterial mat;
+            private bool IsOpen;
+            
+
+            public MaterialGUI(RnRMaterial material)
+            {
+                mat = material;
+            }
+
+            public void OnGUI()
+            {
+                IsOpen = EditorGUILayout.Foldout(IsOpen, mat.Material.name);
+
+                if (IsOpen && Editor == null)
+                {
+                    Editor = UnityEditor.Editor.CreateEditor(mat.Material, typeof(MaterialEditor));
+                }
+
+                if (!IsOpen && Editor != null)
+                {
+                    Destroy();
+                    return;
+                }
+
+                if (IsOpen)
+                {
+                    EditorGUILayout.LabelField(mat.Material.shader.name);
+
+                    Editor.OnInteractivePreviewGUI(
+                        GUILayoutUtility.GetRect(EditorGUIUtility.currentViewWidth - 32, 128), EditorStyles.helpBox);
+                }
+            }
+
+            public void Destroy()
+            {
+                DestroyImmediate(Editor);
+            }
+        }
         public static void PlayClip(AudioClip clip, int startSample = 0, bool loop = false)
         {
             System.Reflection.Assembly unityEditorAssembly = typeof(AudioImporter).Assembly;
