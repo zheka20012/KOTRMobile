@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityTextureFormat = UnityEngine.TextureFormat;
 
 namespace RnRLibrary
 {
@@ -7,26 +8,26 @@ namespace RnRLibrary
     {
         public abstract class TextureBytesConverter
         {
-            public abstract TextureFormat UnityTextureFormat { get; }
+            public abstract UnityTextureFormat UnityTextureFormat { get; }
             public abstract byte[] ConvertBytes(byte[] inBytes, RnRTexture.PixelFormatMask mask);
 
             public abstract byte[] FlipBytes(byte[] inputBytes, ushort imageWidth, ushort imageHeight);
 
-            public static TextureBytesConverter GetConverter(KOTRTextureFormat format)
+            public static TextureBytesConverter GetConverter(TextureFormat format)
             {
                 switch (format)
                 {
-                    case KOTRTextureFormat.Unknown:
+                    case TextureFormat.Unknown:
                         throw new ArgumentException("Unknown texture format!");
-                    case KOTRTextureFormat.RGB555:
+                    case TextureFormat.RGB555:
                         return new RGB555Converter();
-                    case KOTRTextureFormat.RGB565:
+                    case TextureFormat.RGB565:
                         return new RGB565Converter();
-                    case KOTRTextureFormat.ARGB4444:
+                    case TextureFormat.ARGB4444:
                         return new RGB4444Converter();
-                    case KOTRTextureFormat.RGB888:
+                    case TextureFormat.RGB888:
                         return new RGB888Converter();
-                    case KOTRTextureFormat.RGBA8888:
+                    case TextureFormat.RGBA8888:
                         return new RGB8888Converter();
                     default:
                         throw new ArgumentOutOfRangeException(nameof(format), format, null);
@@ -37,9 +38,9 @@ namespace RnRLibrary
         public class RGB555Converter : TextureBytesConverter
         {
             /// <inheritdoc />
-            public override TextureFormat UnityTextureFormat
+            public override UnityTextureFormat UnityTextureFormat
             {
-                get { return TextureFormat.RGB24; }
+                get { return UnityTextureFormat.RGB24; }
             }
 
             /// <inheritdoc />
@@ -67,9 +68,9 @@ namespace RnRLibrary
 
         public class RGB565Converter : TextureBytesConverter
         {
-            public override TextureFormat UnityTextureFormat
+            public override UnityTextureFormat UnityTextureFormat
             {
-                get { return TextureFormat.RGB565; }
+                get { return UnityTextureFormat.RGB565; }
             }
 
             /// <inheritdoc />
@@ -87,9 +88,9 @@ namespace RnRLibrary
 
         public class RGB4444Converter : TextureBytesConverter
         {
-            public override TextureFormat UnityTextureFormat
+            public override UnityTextureFormat UnityTextureFormat
             {
-                get { return TextureFormat.ARGB4444; }
+                get { return UnityTextureFormat.ARGB4444; }
             }
             /// <inheritdoc />
             public override byte[] ConvertBytes(byte[] inBytes, RnRTexture.PixelFormatMask mask)
@@ -106,9 +107,9 @@ namespace RnRLibrary
 
         public class RGB8888Converter : TextureBytesConverter
         {
-            public override TextureFormat UnityTextureFormat
+            public override UnityTextureFormat UnityTextureFormat
             {
-                get { return TextureFormat.RGBA32; }
+                get { return UnityTextureFormat.RGBA32; }
             }
             /// <inheritdoc />
             public override byte[] ConvertBytes(byte[] inBytes, RnRTexture.PixelFormatMask mask)
@@ -138,9 +139,9 @@ namespace RnRLibrary
 
         public class RGB888Converter : TextureBytesConverter
         {
-            public override TextureFormat UnityTextureFormat
+            public override UnityTextureFormat UnityTextureFormat
             {
-                get { return TextureFormat.RGB24; }
+                get { return UnityTextureFormat.RGB24; }
             }
             /// <inheritdoc />
             public override byte[] ConvertBytes(byte[] inBytes, RnRTexture.PixelFormatMask mask)

@@ -30,37 +30,37 @@ namespace RnRLibrary
                 reader.BaseStream.Seek(blockSize, SeekOrigin.Begin);
             }
 
-            public KOTRTextureFormat GetTextureFormat()
+            public RnRLibrary.TextureFormat GetTextureFormat()
             {
                 if (BlueMask == 0x1F)
                 {
 
                     if (GreenMask == 0x7E0 && RedMask == 0xF800 && AlphaMask == 0x0)
                     {
-                        return KOTRTextureFormat.RGB565;
+                        return RnRLibrary.TextureFormat.RGB565;
                     }
 
                     if (GreenMask == 0x3E0 && RedMask == 0x7C00 && AlphaMask == 0)
                     {
-                        return KOTRTextureFormat.RGB555;
+                        return RnRLibrary.TextureFormat.RGB555;
                     }
                 }
                 else if (BlueMask == 0xF && GreenMask == 0xF0 && RedMask == 0xF00 && AlphaMask == 0xF000)
                 {
-                    return KOTRTextureFormat.ARGB4444;
+                    return RnRLibrary.TextureFormat.ARGB4444;
                 }
                 else if (BlueMask == 0xFF && GreenMask == 0xFF00 && RedMask == 0xFF0000)
                 {
                     if (AlphaMask == 0)
                     {
-                        return KOTRTextureFormat.RGB888;
+                        return RnRLibrary.TextureFormat.RGB888;
                     }
 
-                    return KOTRTextureFormat.RGBA8888;
+                    return RnRLibrary.TextureFormat.RGBA8888;
                 }
 
                 Debug.Log($"Unknown texture format: R: 0x{RedMask:x}, G: 0x{GreenMask:x}, B: 0x{BlueMask:x}, A: 0x{AlphaMask:x}");
-                return KOTRTextureFormat.Unknown;
+                return RnRLibrary.TextureFormat.Unknown;
             }
         }
 

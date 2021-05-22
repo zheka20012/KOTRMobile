@@ -1,6 +1,6 @@
 ﻿namespace RnRLibrary
 {
-    public enum KOTRTextureFormat
+    public enum TextureFormat
     {
         Unknown,
         RGB555,
