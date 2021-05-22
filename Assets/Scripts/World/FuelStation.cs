@@ -1,21 +1,22 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class FuelStation : MonoBehaviour
+namespace World
 {
-    //index for fuel delivery, i.e. 29
-    public byte StationIndex;
-
-
-
-    void Start()
+    public class FuelStation : MonoBehaviour
     {
-    }
+        //index for fuel delivery, i.e. 29
+        public byte StationIndex;
 
-    // Update is called once per frame
-    void Update()
-    {
+
+
+        void Start()
+        {
+        }
+
+        // Update is called once per frame
+        void Update()
+        {
         
+        }
     }
 }

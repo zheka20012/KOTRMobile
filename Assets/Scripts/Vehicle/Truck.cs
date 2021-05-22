@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Truck : MonoBehaviour
+public class Truck : MonoBehaviour, IVehicle
 {
     // Start is called before the first frame update
     void Start()

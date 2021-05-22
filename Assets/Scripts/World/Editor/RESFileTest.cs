@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using KOTRLibrary;
+using RnRLibrary;
 using UnityEditor;
 using UnityEngine;
 
@@ -17,7 +17,8 @@ namespace World.Editor
             window.Show();
         }
 
-        private static string FilePath;
+        [SerializeField]
+        private string FilePath;
         private RESFile file;
         private bool IsOpen = false;
 
@@ -130,7 +131,7 @@ namespace World.Editor
                     float width = EditorGUIUtility.currentViewWidth;
                     EditorGUILayout.BeginVertical(GUILayout.MaxWidth((width / 2) - 40));
 
-                    KOTRTexture tex = (KOTRTexture) file.TextureFiles[i].Item;
+                    RnRTexture tex = (RnRTexture) file.TextureFiles[i].Item;
 
                     EditorGUILayout.LabelField($"Texture: {file.TextureFiles[i].Name}", EditorStyles.boldLabel);
                     EditorGUILayout.LabelField($"Dimensions: {tex.Texture.width}x{tex.Texture.height}", EditorStyles.boldLabel);
@@ -148,6 +149,24 @@ namespace World.Editor
                 EditorGUILayout.EndScrollView();
                 EditorGUI.indentLevel--;
             }
+
+            MaterialsOpen = EditorGUILayout.Foldout(MaterialsOpen, "MATERIALS");
+
+            if (MaterialsOpen)
+            {
+                MaterialsScrollPos = EditorGUILayout.BeginScrollView(MaterialsScrollPos);
+                EditorGUILayout.BeginVertical();
+                EditorGUI.indentLevel++;
+                for (int i = 0; i < file.Materials.Count; i++)
+                {
+                    EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+               
+                    EditorGUILayout.EndVertical();
+                }
+                EditorGUILayout.EndVertical();
+                EditorGUILayout.EndScrollView();
+                EditorGUI.indentLevel--;
+            }
         }
 
         private bool SoundFilesOpen = false;
@@ -159,6 +178,9 @@ namespace World.Editor
 
         private bool TextureFilesOpen = false;
         private Vector2 TextureFilesScrollPos = Vector2.zero;
+
+        private bool MaterialsOpen = false;
+        private Vector2 MaterialsScrollPos = Vector2.zero;
 
         private class PaletteGUI
         {
