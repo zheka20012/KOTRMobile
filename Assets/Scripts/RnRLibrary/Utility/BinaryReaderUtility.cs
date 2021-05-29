@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace RnRLibrary.Utility
 {
-    public static class BinaryReaderUtility
+    internal static class BinaryReaderUtility
     {
         private static readonly string _NullTerminator = new string((char) 0, 1);
         /// <summary>

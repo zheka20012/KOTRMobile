@@ -28,7 +28,13 @@ namespace RnRLibrary.B3DNodes
 
             IsShown = reader.ReadInt32();
 
-            base.Read(reader);
+            ReadChilds(reader);
+        }
+
+        /// <inheritdoc />
+        public override Transform ProcessNode(Transform parentTransform)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

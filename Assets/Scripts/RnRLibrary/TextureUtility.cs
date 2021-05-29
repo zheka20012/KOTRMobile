@@ -4,7 +4,7 @@ using UnityTextureFormat = UnityEngine.TextureFormat;
 
 namespace RnRLibrary
 {
-    public class TextureUtility
+    internal class TextureUtility
     {
         public abstract class TextureBytesConverter
         {

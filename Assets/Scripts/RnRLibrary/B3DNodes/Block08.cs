@@ -6,9 +6,6 @@ namespace RnRLibrary.B3DNodes
 {
     public class Block08 : BaseNode, IBoundingSphere
     {
-        
-
-        
         /// <inheritdoc />
         public Block08(NodeHeader header) : base(header)
         {

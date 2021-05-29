@@ -11,6 +11,7 @@ namespace RnRLibrary.B3DNodes
         {
         }
 
+
         /// <inheritdoc />
         public override void Read(BinaryReader reader)
         {

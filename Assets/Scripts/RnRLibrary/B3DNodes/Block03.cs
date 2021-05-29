@@ -19,8 +19,13 @@ namespace RnRLibrary.B3DNodes
             Position = reader.ReadStruct<Vector3>();
             Radius = reader.ReadSingle();
 
-            base.Read(reader);
+            ReadChilds(reader);
+        }
 
+        /// <inheritdoc />
+        public override Transform ProcessNode(Transform parentTransform)
+        {
+            throw new System.NotImplementedException();
         }
 
         /// <inheritdoc />

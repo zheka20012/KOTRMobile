@@ -2,19 +2,27 @@
 using System.Collections.Generic;
 using System.IO;
 using RnRLibrary.Utility;
+using UnityEngine;
 
 namespace RnRLibrary.B3DNodes
 {
-    public abstract class BaseNode : IBinaryReadable
+    public abstract class BaseNode : INode, IBinaryReadable
     {
-        public string Name;
+        public string Name { get; }
 
         public BaseNode(NodeHeader header)
         {
             Name = header.Name;
         }
 
+        /// <inheritdoc />
         public abstract void Read(BinaryReader reader);
+
+        /// <inheritdoc />
+        public Transform ProcessNode(Transform parentTransform)
+        {
+            throw new NotImplementedException();
+        }
 
         private static Dictionary<uint, Type> NodeTypes = new Dictionary<uint, Type>()
         {
@@ -39,17 +47,18 @@ namespace RnRLibrary.B3DNodes
             {29, typeof(NotImplementedGroupNode) },
             {30, typeof(Block30) },
             {33, typeof(Block33) },
+            {35, typeof(Block35) },
             {36, typeof(Block36) },
             {37, typeof(Block37) },
             {39, typeof(NotImplementedGroupNode) },
             {40, typeof(Block40) },
         };
 
-        public static BaseNode GetNode(NodeHeader header)
+        public static INode GetNode(NodeHeader header)
         {
             if (NodeTypes.ContainsKey(header.Id))
             {
-                return Activator.CreateInstance(NodeTypes[header.Id], header) as BaseNode;
+                return Activator.CreateInstance(NodeTypes[header.Id], header) as INode;
             }
 
             return new NotImplementedNode(header);

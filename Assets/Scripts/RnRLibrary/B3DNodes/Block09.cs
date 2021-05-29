@@ -20,7 +20,13 @@ namespace RnRLibrary.B3DNodes
             TriggerOffset = reader.ReadStruct<Vector3>();
             TriggerDistance = reader.ReadSingle();
 
-            base.Read(reader);
+            ReadChilds(reader);
+        }
+
+        /// <inheritdoc />
+        public override Transform ProcessNode(Transform parentTransform)
+        {
+            throw new System.NotImplementedException();
         }
 
         /// <inheritdoc />

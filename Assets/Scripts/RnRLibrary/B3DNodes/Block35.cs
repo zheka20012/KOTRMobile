@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using RnRLibrary.Utility;
 using UnityEngine;
 
@@ -12,7 +13,6 @@ namespace RnRLibrary.B3DNodes
         {
         }
 
-        //TODO: normal implementation of mesh node reading
         /// <inheritdoc />
         public override void Read(BinaryReader reader)
         {
@@ -23,7 +23,20 @@ namespace RnRLibrary.B3DNodes
 
             MaterialIndex = reader.ReadUInt32();
 
-            var indexCount = reader.ReadUInt32();
+            var indicesCount = reader.ReadUInt32();
+
+            Polygons = new List<IPolygon>();
+
+            for (int i = 0; i < indicesCount; i++)
+            {
+                int polygonType = reader.ReadInt32();
+
+                IPolygon polygon = PolygonResolver.ResolvePolygon(polygonType);
+
+                polygon.Read(reader);
+
+                Polygons.Add(polygon);
+            }
         }
 
         /// <inheritdoc />
@@ -34,5 +47,6 @@ namespace RnRLibrary.B3DNodes
 
         public uint MaterialIndex { get; set; }
 
+        public List<IPolygon> Polygons { get; private set; }
     }
 }

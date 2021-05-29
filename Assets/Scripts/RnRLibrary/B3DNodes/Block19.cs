@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using UnityEngine;
 
 namespace RnRLibrary.B3DNodes
 {
@@ -12,9 +13,13 @@ namespace RnRLibrary.B3DNodes
         /// <inheritdoc />
         public override void Read(BinaryReader reader)
         {
-            base.Read(reader);
+            ReadChilds(reader);
         }
 
-
+        /// <inheritdoc />
+        public override Transform ProcessNode(Transform parentTransform)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

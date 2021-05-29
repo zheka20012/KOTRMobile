@@ -12,19 +12,9 @@ namespace RnRLibrary
     {
         private static byte[] B3DHeader = new byte[4] { 98, 51, 100, 0 }; //b3d signature with null-terminating character
 
-        private enum Identifier
-        {
-            Other = 0,
-            Chunk_Start = 111,
-            Chunk_End = 222,
-            Block_Start = 333,
-            Block_Separator = 444,
-            Block_End = 555,
-        }
-
         public List<string> MaterialLibrary;
 
-        public List<BaseNode> Nodes;
+        public List<INode> Nodes;
 
         public static B3DFile OpenFile(string filePath)
         {
@@ -62,17 +52,17 @@ namespace RnRLibrary
                 //Jump to data definition
                 reader.BaseStream.Seek(dataOffset * 4, SeekOrigin.Begin);
 
-                if (reader.ReadUInt32() == 111)
+                if (reader.ReadUInt32() == (int)Identifier.Chunk_Start)
                 {
-                    file.Nodes = new List<BaseNode>();
+                    file.Nodes = new List<INode>();
 
                     uint ident;
 
-                    while ((ident = reader.ReadUInt32()) != 222)
+                    while ((ident = reader.ReadUInt32()) != (int)Identifier.Chunk_End)
                     {
                         //if(ident == 444) continue;
 
-                        if (ident == 333)
+                        if (ident == (int)Identifier.Block_Start)
                         {
                             NodeHeader header = reader.Read<NodeHeader>();
 
@@ -91,6 +81,6 @@ namespace RnRLibrary
             throw new NotImplementedException();
         }
 
-        public BaseNode CurrentNode;
+        public INode CurrentNode;
     }
 }

@@ -22,14 +22,14 @@ public class B3DFileTest : EditorWindow
 
     private class EditorBlockUI
     {
-        private BaseNode Node;
+        private INode Node;
 
         private List<EditorBlockUI> ChildNodes;
 
         private bool IsOpened;
         private bool IsShownValues;
 
-        public EditorBlockUI(BaseNode node)
+        public EditorBlockUI(INode node)
         {
             if (node.GetType().IsSubclassOf(typeof(BaseGroupNode)))
             {

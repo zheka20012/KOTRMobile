@@ -1,28 +1,32 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using RnRLibrary.Utility;
+using UnityEngine;
 
 namespace RnRLibrary.B3DNodes
 {
-    public class BaseGroupNode : BaseNode
+    public abstract class BaseGroupNode : INode
     {
-        public List<BaseNode> ChildNodes;
+        public string Name { get; }
 
+        public List<INode> ChildNodes;
+
+        public abstract void Read(BinaryReader reader);
 
         protected void ReadChilds(BinaryReader reader)
         {
             uint numChilds = reader.ReadUInt32();
 
-            ChildNodes = new List<BaseNode>();
+            ChildNodes = new List<INode>();
 
-            BaseNode tempNode;
+            INode tempNode;
 
             for (uint i = 0; i < numChilds; i++)
             {
                 //TODO: fix reading child nodes
-                while (reader.ReadUInt32() != 333) ;
+                while (reader.ReadUInt32() != (int)Identifier.Block_Start) ;
 
-                if (reader.ReadUInt32() != 444)
+                if (reader.ReadUInt32() != (int)Identifier.Block_Separator)
                 {
                     reader.BaseStream.Seek(-4, SeekOrigin.Current);
                 }
@@ -38,14 +42,11 @@ namespace RnRLibrary.B3DNodes
         }
 
         /// <inheritdoc />
-        public override void Read(BinaryReader reader)
-        {
-            ReadChilds(reader);
-        }
+        public abstract Transform ProcessNode(Transform parentTransform);
 
-        /// <inheritdoc />
-        public BaseGroupNode(NodeHeader header) : base(header)
+        public BaseGroupNode(NodeHeader header)
         {
+            Name = header.Name;
         }
     }
 }
