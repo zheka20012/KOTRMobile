@@ -2,7 +2,7 @@
 
 namespace RnRLibrary
 {
-    public class NoZBufferParameter : IMaterialParameter
+    internal class NoZBufferParameter : IMaterialParameter
     {
         /// <inheritdoc />
         public void Parse(RESFile file, params string[] options)

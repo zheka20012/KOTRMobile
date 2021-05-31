@@ -44,6 +44,14 @@ namespace RnRLibrary.B3DNodes
         /// <inheritdoc />
         public abstract Transform ProcessNode(Transform parentTransform);
 
+        public void EnumTree(Transform parentTransform)
+        {
+            for (int i = 0; i < ChildNodes.Count; i++)
+            {
+                ChildNodes[i].ProcessNode(parentTransform);
+            }
+        }
+
         public BaseGroupNode(NodeHeader header)
         {
             Name = header.Name;

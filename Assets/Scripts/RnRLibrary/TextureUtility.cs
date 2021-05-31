@@ -6,10 +6,10 @@ namespace RnRLibrary
 {
     internal class TextureUtility
     {
-        public abstract class TextureBytesConverter
+        internal abstract class TextureBytesConverter
         {
             public abstract UnityTextureFormat UnityTextureFormat { get; }
-            public abstract byte[] ConvertBytes(byte[] inBytes, RnRTexture.PixelFormatMask mask);
+            public abstract byte[] ConvertBytes(byte[] inBytes, Texture16Bit.PixelFormatMask mask);
 
             public abstract byte[] FlipBytes(byte[] inputBytes, ushort imageWidth, ushort imageHeight);
 
@@ -35,7 +35,7 @@ namespace RnRLibrary
             }
         }
 
-        public class RGB555Converter : TextureBytesConverter
+        internal class RGB555Converter : TextureBytesConverter
         {
             /// <inheritdoc />
             public override UnityTextureFormat UnityTextureFormat
@@ -44,7 +44,7 @@ namespace RnRLibrary
             }
 
             /// <inheritdoc />
-            public override byte[] ConvertBytes(byte[] data, RnRTexture.PixelFormatMask mask)
+            public override byte[] ConvertBytes(byte[] data, Texture16Bit.PixelFormatMask mask)
             {
                 byte[] rgbTextureBytes = new byte[data.Length / 2 * 3];
 
@@ -66,7 +66,7 @@ namespace RnRLibrary
             }
         }
 
-        public class RGB565Converter : TextureBytesConverter
+        internal class RGB565Converter : TextureBytesConverter
         {
             public override UnityTextureFormat UnityTextureFormat
             {
@@ -74,7 +74,7 @@ namespace RnRLibrary
             }
 
             /// <inheritdoc />
-            public override byte[] ConvertBytes(byte[] inBytes, RnRTexture.PixelFormatMask mask)
+            public override byte[] ConvertBytes(byte[] inBytes, Texture16Bit.PixelFormatMask mask)
             {
                 return inBytes;
             }
@@ -86,14 +86,14 @@ namespace RnRLibrary
             }
         }
 
-        public class RGB4444Converter : TextureBytesConverter
+        internal class RGB4444Converter : TextureBytesConverter
         {
             public override UnityTextureFormat UnityTextureFormat
             {
                 get { return UnityTextureFormat.ARGB4444; }
             }
             /// <inheritdoc />
-            public override byte[] ConvertBytes(byte[] inBytes, RnRTexture.PixelFormatMask mask)
+            public override byte[] ConvertBytes(byte[] inBytes, Texture16Bit.PixelFormatMask mask)
             {
                 return inBytes;
             }
@@ -105,14 +105,14 @@ namespace RnRLibrary
             }
         }
 
-        public class RGB8888Converter : TextureBytesConverter
+        internal class RGB8888Converter : TextureBytesConverter
         {
             public override UnityTextureFormat UnityTextureFormat
             {
                 get { return UnityTextureFormat.RGBA32; }
             }
             /// <inheritdoc />
-            public override byte[] ConvertBytes(byte[] inBytes, RnRTexture.PixelFormatMask mask)
+            public override byte[] ConvertBytes(byte[] inBytes, Texture16Bit.PixelFormatMask mask)
             {
                 byte[] rgbTextureBytes = new byte[inBytes.Length / 2 * 4];
 
@@ -137,14 +137,14 @@ namespace RnRLibrary
             }
         }
 
-        public class RGB888Converter : TextureBytesConverter
+        internal class RGB888Converter : TextureBytesConverter
         {
             public override UnityTextureFormat UnityTextureFormat
             {
                 get { return UnityTextureFormat.RGB24; }
             }
             /// <inheritdoc />
-            public override byte[] ConvertBytes(byte[] inBytes, RnRTexture.PixelFormatMask mask)
+            public override byte[] ConvertBytes(byte[] inBytes, Texture16Bit.PixelFormatMask mask)
             {
                 byte[] rgbTextureBytes = new byte[inBytes.Length / 2 * 3];
 
@@ -167,7 +167,7 @@ namespace RnRLibrary
             }
         }
 
-        protected static byte[] FlipBytes(byte[] inputBytes, ushort imageWidth, ushort imageHeight, byte componentsCount)
+        public static byte[] FlipBytes(byte[] inputBytes, ushort imageWidth, ushort imageHeight, byte componentsCount)
         {
             byte[] flippedBytes = new byte[inputBytes.Length];
 

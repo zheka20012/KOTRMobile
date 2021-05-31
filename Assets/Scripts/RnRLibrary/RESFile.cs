@@ -208,7 +208,6 @@ namespace RnRLibrary
             {
                 var sInfo = reader.Read<SectionInfo<Mask>>();
                 long tempPos = reader.BaseStream.Position; //TODO: Implement full MSK support
-                //sInfo.Item = reader.Read<KOTRTexture>();
                 MaskFiles.Add(sInfo);
                 reader.BaseStream.Seek(sInfo.Size + tempPos, SeekOrigin.Begin);
             }

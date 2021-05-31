@@ -2,7 +2,7 @@
 
 namespace RnRLibrary
 {
-    public class NoTileParameter : IMaterialParameter
+    internal class NoTileParameter : IMaterialParameter
     {
         /// <inheritdoc />
         public void Parse(RESFile file, params string[] options)

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace RnRLibrary
 {
-    public class TransparencyParameter : IMaterialParameter
+    internal class TransparencyParameter : IMaterialParameter
     {
         private float _TransparencyLevel;
         /// <inheritdoc />

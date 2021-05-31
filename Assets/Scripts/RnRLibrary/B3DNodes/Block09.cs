@@ -26,7 +26,11 @@ namespace RnRLibrary.B3DNodes
         /// <inheritdoc />
         public override Transform ProcessNode(Transform parentTransform)
         {
-            throw new System.NotImplementedException();
+            var _transform = new GameObject(Name).transform;
+
+            EnumTree(_transform);
+
+            return _transform;
         }
 
         /// <inheritdoc />

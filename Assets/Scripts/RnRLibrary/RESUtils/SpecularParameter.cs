@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace RnRLibrary
 {
-    public class SpecularParameter : IMaterialParameter
+    internal class SpecularParameter : IMaterialParameter
     {
         private float _Power;
 

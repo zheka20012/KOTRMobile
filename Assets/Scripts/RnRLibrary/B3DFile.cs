@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using RnRLibrary.B3DNodes;
 using RnRLibrary.Utility;
+using UnityEditor.Experimental.UIElements.GraphView;
 
 namespace RnRLibrary
 {
@@ -60,17 +61,17 @@ namespace RnRLibrary
 
                     while ((ident = reader.ReadUInt32()) != (int)Identifier.Chunk_End)
                     {
-                        //if(ident == 444) continue;
+                        //if(ident == 444) continue; // Unused???
 
                         if (ident == (int)Identifier.Block_Start)
                         {
                             NodeHeader header = reader.Read<NodeHeader>();
 
-                            file.CurrentNode = BaseNode.GetNode(header);
+                            INode node = BaseNode.GetNode(header);
 
-                            file.CurrentNode.Read(reader);
+                            node.Read(reader);
 
-                            file.Nodes.Add(file.CurrentNode);
+                            file.Nodes.Add(node);
                         }
                     }
                 }
@@ -81,6 +82,38 @@ namespace RnRLibrary
             throw new NotImplementedException();
         }
 
-        public INode CurrentNode;
+        public INode Find(string name)
+        {
+            for (int i = 0; i < Nodes.Count; i++)
+            {
+                if (Nodes[i].Name == name)
+                {
+                    return Nodes[i];
+                }
+            }
+
+            return null;
+        }
+
+        public INode this[int index]
+        {
+            get
+            {
+                if (index > Nodes.Count)
+                {
+                    return null;
+                }
+
+                return Nodes[index];
+            }
+        }
+
+        public INode this[string name]
+        {
+            get
+            {
+                return Find(name);
+            }
+        }
     }
 }

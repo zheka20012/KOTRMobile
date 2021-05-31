@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace RnRLibrary
 {
-    public class MoveParameter : IMaterialParameter
+    internal class MoveParameter : IMaterialParameter
     {
         private float _MoveX;
         private float _MoveY;

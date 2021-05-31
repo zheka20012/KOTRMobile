@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace RnRLibrary
 {
-    public class TransparentTextureParameter : IMaterialParameter
+    internal class TransparentTextureParameter : IMaterialParameter
     {
         private RnRTexture _Texture;
 

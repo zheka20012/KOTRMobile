@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace RnRLibrary
 {
-    public class ColorParameter : IMaterialParameter
+    internal class ColorParameter : IMaterialParameter
     {
         private Color _Color;
 

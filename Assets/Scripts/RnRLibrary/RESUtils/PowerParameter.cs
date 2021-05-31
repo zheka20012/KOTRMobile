@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace RnRLibrary
 {
-    public class PowerParameter : IMaterialParameter
+    internal class PowerParameter : IMaterialParameter
     {
         private float _Power;
 

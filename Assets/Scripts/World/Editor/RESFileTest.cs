@@ -253,6 +253,8 @@ namespace World.Editor
 
             public void OnGUI()
             {
+                if(mat == null) return;
+
                 IsOpen = EditorGUILayout.Foldout(IsOpen, mat.Material.name);
 
                 if (IsOpen && Editor == null)
