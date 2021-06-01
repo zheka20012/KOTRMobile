@@ -25,8 +25,10 @@ namespace RnRLibrary
                 switch (System.Text.Encoding.UTF8.GetString(reader.ReadBytes(4)))
                 {
                     case "PALT": //Palette
+                    {
+                        reader.ReadUInt32();
                         ReadPalette(reader);
-                        break;
+                    } break;
                 }
             }
 
@@ -34,7 +36,7 @@ namespace RnRLibrary
 
         public void ReadPalette(BinaryReader reader)
         {
-            reader.ReadUInt32();
+
             PaletteColors = new Color[256];
 
             for (int i = 0; i < 256; i++)

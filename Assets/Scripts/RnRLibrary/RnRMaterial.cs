@@ -91,6 +91,7 @@ namespace RnRLibrary
 
             MaterialParameters = new List<IMaterialParameter>();
 
+            //TODO: Fix material parameters initialization
             for (int i = 1; i < _MaterialParameters.Length; i++)
             {
                 try
@@ -111,10 +112,10 @@ namespace RnRLibrary
 
                     i += skipCount;
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    Debug.LogException(e);
-                    Debug.LogError($"{i}");
+                    //Debug.LogException(e);
+                    //Debug.LogError($"{i}");
                 }
                 
             }
