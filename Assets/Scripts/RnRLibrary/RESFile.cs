@@ -55,7 +55,7 @@ namespace RnRLibrary
         public List<SectionInfo<Palette>> Palettes { get; private set; }
         public List<SectionInfo<SoundFile>> SoundFiles { get; private set; }
         public List<SectionInfo<RnRTexture>> TextureFiles { get; private set; }
-        public List<SectionInfo<Mask>> MaskFiles { get; private set; }
+        public List<SectionInfo<RnRMask>> MaskFiles { get; private set; }
 
         public List<RnRMaterial> Materials
         {
@@ -121,6 +121,8 @@ namespace RnRLibrary
 
         private void InitMaterials()
         {
+            if(_Materials == null) return;
+
             for (int i = 0; i < _Materials.Count; i++)
             {
                 _Materials[i].InitMaterial(this);
@@ -202,12 +204,13 @@ namespace RnRLibrary
 
         public void ReadMaskFiles(BinaryReader reader, uint count)
         {
-            MaskFiles = new List<SectionInfo<Mask>>();
+            MaskFiles = new List<SectionInfo<RnRMask>>();
 
             for (int i = 0; i < count; i++)
             {
-                var sInfo = reader.Read<SectionInfo<Mask>>();
+                var sInfo = reader.Read<SectionInfo<RnRMask>>();
                 long tempPos = reader.BaseStream.Position; //TODO: Implement full MSK support
+                sInfo.Item = reader.Read<RnRMask>();
                 MaskFiles.Add(sInfo);
                 reader.BaseStream.Seek(sInfo.Size + tempPos, SeekOrigin.Begin);
             }

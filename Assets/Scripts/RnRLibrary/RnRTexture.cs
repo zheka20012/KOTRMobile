@@ -12,7 +12,7 @@ namespace RnRLibrary
     {
 
 
-        public Texture2D Texture
+        public virtual Texture2D Texture
         {
             get
             {

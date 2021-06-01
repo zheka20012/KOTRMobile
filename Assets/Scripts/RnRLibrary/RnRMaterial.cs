@@ -45,8 +45,8 @@ namespace RnRLibrary
                     }
                     case "move":
                     {
-                        paramCount = 2;
-                        return new TransparentTextureParameter();
+                        paramCount = 2; 
+                        return new MoveParameter();
                     }
                     case "specular":
                     {

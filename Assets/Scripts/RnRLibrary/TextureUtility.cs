@@ -9,7 +9,7 @@ namespace RnRLibrary
         internal abstract class TextureBytesConverter
         {
             public abstract UnityTextureFormat UnityTextureFormat { get; }
-            public abstract byte[] ConvertBytes(byte[] inBytes, Texture16Bit.PixelFormatMask mask);
+            public abstract byte[] ConvertBytes(byte[] inBytes, PixelFormatMask mask);
 
             public abstract byte[] FlipBytes(byte[] inputBytes, ushort imageWidth, ushort imageHeight);
 
@@ -44,7 +44,7 @@ namespace RnRLibrary
             }
 
             /// <inheritdoc />
-            public override byte[] ConvertBytes(byte[] data, Texture16Bit.PixelFormatMask mask)
+            public override byte[] ConvertBytes(byte[] data, PixelFormatMask mask)
             {
                 byte[] rgbTextureBytes = new byte[data.Length / 2 * 3];
 
@@ -74,7 +74,7 @@ namespace RnRLibrary
             }
 
             /// <inheritdoc />
-            public override byte[] ConvertBytes(byte[] inBytes, Texture16Bit.PixelFormatMask mask)
+            public override byte[] ConvertBytes(byte[] inBytes, PixelFormatMask mask)
             {
                 return inBytes;
             }
@@ -93,7 +93,7 @@ namespace RnRLibrary
                 get { return UnityTextureFormat.ARGB4444; }
             }
             /// <inheritdoc />
-            public override byte[] ConvertBytes(byte[] inBytes, Texture16Bit.PixelFormatMask mask)
+            public override byte[] ConvertBytes(byte[] inBytes, PixelFormatMask mask)
             {
                 return inBytes;
             }
@@ -112,7 +112,7 @@ namespace RnRLibrary
                 get { return UnityTextureFormat.RGBA32; }
             }
             /// <inheritdoc />
-            public override byte[] ConvertBytes(byte[] inBytes, Texture16Bit.PixelFormatMask mask)
+            public override byte[] ConvertBytes(byte[] inBytes, PixelFormatMask mask)
             {
                 byte[] rgbTextureBytes = new byte[inBytes.Length / 2 * 4];
 
@@ -144,7 +144,7 @@ namespace RnRLibrary
                 get { return UnityTextureFormat.RGB24; }
             }
             /// <inheritdoc />
-            public override byte[] ConvertBytes(byte[] inBytes, Texture16Bit.PixelFormatMask mask)
+            public override byte[] ConvertBytes(byte[] inBytes, PixelFormatMask mask)
             {
                 byte[] rgbTextureBytes = new byte[inBytes.Length / 2 * 3];
 

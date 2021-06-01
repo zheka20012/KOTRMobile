@@ -163,6 +163,39 @@ namespace World.Editor
                 EditorGUI.indentLevel--;
             }
 
+            MaskFilesOpen = EditorGUILayout.Foldout(MaskFilesOpen, "MASKFILES");
+
+            if (MaskFilesOpen)
+            {
+                MaskFilesScrollPos = EditorGUILayout.BeginScrollView(MaskFilesScrollPos);
+                EditorGUILayout.BeginVertical();
+                EditorGUI.indentLevel++;
+                for (int i = 0; i < file.MaskFiles.Count; i++)
+                {
+                    EditorGUILayout.BeginVertical(EditorStyles.helpBox, GUILayout.MaxHeight(128));
+                    EditorGUILayout.BeginHorizontal();
+                    float width = EditorGUIUtility.currentViewWidth;
+                    EditorGUILayout.BeginVertical(GUILayout.MaxWidth((width / 2) - 40));
+
+                    RnRTexture tex = (RnRTexture)file.MaskFiles[i].Item;
+
+                    EditorGUILayout.LabelField($"Texture: {file.MaskFiles[i].Name}", EditorStyles.boldLabel);
+                    EditorGUILayout.LabelField($"Dimensions: {tex.Texture.width}x{tex.Texture.height}", EditorStyles.boldLabel);
+                    EditorGUILayout.LabelField($"Format: {tex.Texture.format:G}", EditorStyles.boldLabel);
+                    EditorGUILayout.EndVertical();
+                    EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth((width / 2) + 20));
+                    Rect layoutRect = EditorGUILayout.GetControlRect(GUILayout.Height(128));
+                    EditorGUI.DrawTextureTransparent(layoutRect, tex.Texture, ScaleMode.ScaleToFit);
+                    //EditorGUILayout.HelpBox(new GUIContent(tex.Texture));
+                    EditorGUILayout.EndHorizontal();
+                    EditorGUILayout.EndHorizontal();
+                    EditorGUILayout.EndVertical();
+                }
+                EditorGUILayout.EndVertical();
+                EditorGUILayout.EndScrollView();
+                EditorGUI.indentLevel--;
+            }
+
             MaterialsOpen = EditorGUILayout.Foldout(MaterialsOpen, "MATERIALS");
 
             if (MaterialsOpen)
@@ -189,6 +222,9 @@ namespace World.Editor
 
         private bool TextureFilesOpen = false;
         private Vector2 TextureFilesScrollPos = Vector2.zero;
+
+        private bool MaskFilesOpen = false;
+        private Vector2 MaskFilesScrollPos = Vector2.zero;
 
         private bool MaterialsOpen = false;
         private Vector2 MaterialsScrollPos = Vector2.zero;
@@ -253,7 +289,7 @@ namespace World.Editor
 
             public void OnGUI()
             {
-                if(mat == null) return;
+                if(mat == null || mat.Material == null) return;
 
                 IsOpen = EditorGUILayout.Foldout(IsOpen, mat.Material.name);
 
