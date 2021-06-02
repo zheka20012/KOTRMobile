@@ -39,6 +39,12 @@ namespace RnRLibrary.B3DNodes
         }
 
         /// <inheritdoc />
+        public override Transform ProcessNode(Transform parentTransform)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        /// <inheritdoc />
         public Vector3 Position { get; set; }
 
         /// <inheritdoc />

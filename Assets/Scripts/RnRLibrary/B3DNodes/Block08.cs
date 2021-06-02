@@ -23,6 +23,18 @@ namespace RnRLibrary.B3DNodes
         }
 
         /// <inheritdoc />
+        public override Transform ProcessNode(Transform parentTransform)
+        {
+            if (parentTransform.GetComponent<MeshFilter>() == null) // We not found mesh filter, that's wrong
+            {
+                Debug.LogError("Wrong b3d hierarchy! Can't find mesh vertex delaration!", parentTransform);
+                return parentTransform;
+            }
+
+            return parentTransform;
+        }
+
+        /// <inheritdoc />
         public Vector3 Position { get; set; }
 
         /// <inheritdoc />

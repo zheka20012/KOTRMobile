@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using RnRLibrary.Utility;
 using UnityEngine;
@@ -25,28 +26,45 @@ namespace RnRLibrary.B3DNodes
 
             var indicesCount = reader.ReadUInt32();
 
-            Polygons = new List<IPolygon>();
+            Polygons = new Polygon[indicesCount];   
 
             for (int i = 0; i < indicesCount; i++)
             {
-                int polygonType = reader.ReadInt32();
-
-                IPolygon polygon = PolygonResolver.ResolvePolygon(polygonType);
-
-                polygon.Read(reader);
-
-                Polygons.Add(polygon);
+                Polygons[i] = reader.Read<Polygon>();
             }
         }
 
         /// <inheritdoc />
-        public Vector3 Position { get; set; }
+        public override Transform ProcessNode(Transform parentTransform)
+        {
+            if (parentTransform.GetComponent<MeshFilter>() == null) // We not found mesh filter, that's wrong
+            {
+                Debug.LogError("Wrong b3d hierarchy! Can't find mesh vertex delaration!", parentTransform);
+                return parentTransform;
+            }
+
+            MeshFilter filter = parentTransform.GetComponent<MeshFilter>();
+
+            Mesh usedMesh = filter.sharedMesh;
+
+            for (int i = 0; i < Polygons.Length; i++)
+            {
+                Polygons[i].Parse(ref usedMesh);
+            }
+
+            filter.sharedMesh = usedMesh;
+
+            return parentTransform;
+        }
 
         /// <inheritdoc />
-        public float Radius { get; set; }
+        public Vector3 Position { get; private set; }
 
-        public uint MaterialIndex { get; set; }
+        /// <inheritdoc />
+        public float Radius { get; private set; }
 
-        public List<IPolygon> Polygons { get; private set; }
+        public uint MaterialIndex { get; private set; }
+
+        public Polygon[] Polygons { get; private set; }
     }
 }

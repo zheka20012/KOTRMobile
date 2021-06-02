@@ -13,6 +13,12 @@ namespace RnRLibrary.B3DNodes
         }
 
         /// <inheritdoc />
+        public override Transform ProcessNode(Transform parentTransform)
+        {
+            return null;
+        }
+
+        /// <inheritdoc />
         public Block01(NodeHeader header) : base(header)
         {
         }

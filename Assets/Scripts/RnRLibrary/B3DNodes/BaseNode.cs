@@ -19,10 +19,7 @@ namespace RnRLibrary.B3DNodes
         public abstract void Read(BinaryReader reader);
 
         /// <inheritdoc />
-        public Transform ProcessNode(Transform parentTransform)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract Transform ProcessNode(Transform parentTransform);
 
         private static Dictionary<uint, Type> NodeTypes = new Dictionary<uint, Type>()
         {

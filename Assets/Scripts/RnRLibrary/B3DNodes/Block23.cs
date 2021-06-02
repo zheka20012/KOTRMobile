@@ -56,6 +56,12 @@ namespace RnRLibrary.B3DNodes
             }
         }
 
+        /// <inheritdoc />
+        public override Transform ProcessNode(Transform parentTransform)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public uint UNKNOWN { get; set; }
 
         public uint SurfaceType { get; set; }

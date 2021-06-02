@@ -15,5 +15,11 @@ namespace RnRLibrary.B3DNodes
         {
             reader.ReadBytes(44);
         }
+
+        /// <inheritdoc />
+        public override Transform ProcessNode(Transform parentTransform)
+        {
+            return null;
+        }
     }
 }

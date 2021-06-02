@@ -4,7 +4,7 @@ namespace RnRLibrary.B3DNodes
 {
     public interface IBoundingSphere
     {
-        Vector3 Position { get; set; }
-        float Radius { get; set; }
+        Vector3 Position { get; }
+        float Radius { get;}
     }
 }

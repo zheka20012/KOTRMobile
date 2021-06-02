@@ -32,6 +32,12 @@ namespace RnRLibrary.B3DNodes
             }
         }
 
+        /// <inheritdoc />
+        public override Transform ProcessNode(Transform parentTransform)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public string Empty { get; set; }
         public string GeneratorName { get; set; }
 

@@ -34,6 +34,12 @@ namespace RnRLibrary.B3DNodes
             UNKNOWN13 = reader.ReadSingle();
         }
 
+        /// <inheritdoc />
+        public override Transform ProcessNode(Transform parentTransform)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public int UNKNOWN { get; set; }
         public int UNKNOWN1 { get; set; }
         public int UNKNOWN2 { get; set; }
