@@ -34,7 +34,11 @@ namespace RnRLibrary.B3DNodes
         /// <inheritdoc />
         public override Transform ProcessNode(Transform parentTransform)
         {
-            throw new System.NotImplementedException();
+            Transform obj = this.CreateObject(parentTransform);
+
+            EnumTree(obj);
+
+            return parentTransform;
         }
     }
 }

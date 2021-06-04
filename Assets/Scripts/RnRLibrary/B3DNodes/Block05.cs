@@ -22,7 +22,7 @@ namespace RnRLibrary.B3DNodes
         /// <inheritdoc />
         public override Transform ProcessNode(Transform parentTransform)
         {
-            var _transform = new GameObject(Name).transform;
+            var _transform = this.CreateObject(parentTransform);
 
             EnumTree(_transform);
 

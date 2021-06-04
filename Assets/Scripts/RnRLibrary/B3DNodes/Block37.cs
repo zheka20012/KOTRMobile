@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using RnRLibrary.Utility;
 using UnityEngine;
 
@@ -115,7 +116,38 @@ namespace RnRLibrary.B3DNodes
         /// <inheritdoc />
         public override Transform ProcessNode(Transform parentTransform)
         {
-            throw new System.NotImplementedException();
+            Transform _transform = this.CreateObject(parentTransform, false);
+
+            var filter = _transform.gameObject.AddComponent<MeshFilter>();
+            var renderer = _transform.gameObject.AddComponent<MeshRenderer>();
+            renderer.sharedMaterial = new Material(Shader.Find("RnRBaseDiffuse"));
+
+            if (parentTransform != null && parentTransform.GetComponentInParent<LODGroup>() != null)
+            {
+               LOD[] lods = parentTransform.GetComponentInParent<LODGroup>().GetLODs();
+
+               LOD lastLod = lods.Last();
+
+               var renderers = lastLod.renderers.ToList();
+               renderers.Add(renderer);
+
+               lastLod.renderers = renderers.ToArray();
+
+               lods[lods.Length - 1] = lastLod;
+
+               parentTransform.GetComponentInParent<LODGroup>().SetLODs(lods);
+               parentTransform.GetComponentInParent<LODGroup>().RecalculateBounds();
+            }
+
+            filter.sharedMesh = new Mesh();
+
+            filter.sharedMesh.vertices = vertices.ToArray();
+            filter.sharedMesh.uv = uv.ToArray();
+            filter.sharedMesh.normals = normals.ToArray();
+
+            EnumTree(_transform);
+
+            return _transform;
         }
 
         /// <inheritdoc />

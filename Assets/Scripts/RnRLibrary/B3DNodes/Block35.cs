@@ -53,6 +53,8 @@ namespace RnRLibrary.B3DNodes
             }
 
             filter.sharedMesh = usedMesh;
+            filter.sharedMesh.RecalculateNormals();
+            filter.sharedMesh.RecalculateBounds();
 
             return parentTransform;
         }

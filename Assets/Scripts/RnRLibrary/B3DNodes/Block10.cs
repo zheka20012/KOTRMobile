@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using RnRLibrary.Utility;
 using UnityEngine;
 
@@ -26,7 +28,34 @@ namespace RnRLibrary.B3DNodes
         /// <inheritdoc />
         public override Transform ProcessNode(Transform parentTransform)
         {
-            throw new System.NotImplementedException();
+            LODGroup lodGroup;
+
+            //check if we have one lod group
+            if ((lodGroup = parentTransform.GetComponentInParent<LODGroup>()) == null)
+            {
+                //if none found, create new
+                lodGroup = parentTransform.gameObject.AddComponent<LODGroup>();
+                // By default unity generates 3 lod levels, get rid of them
+                lodGroup.SetLODs(null); 
+            }
+
+            // Creating new lod struct ans pass the distance to it
+            // TODO: Proper conversion between real distance (RnR) and screen fill percentage (Unity)
+            LOD lod = new LOD(1F/TriggerDistance, null);
+
+            //Getting list of LODs
+            List<LOD> lods = lodGroup.GetLODs().ToList();
+
+            //add our new lod
+            lods.Add(lod);
+            
+            //return it back
+            lodGroup.SetLODs(lods.ToArray());
+
+
+            EnumTree(parentTransform);
+            
+            return parentTransform;
         }
 
         /// <inheritdoc />

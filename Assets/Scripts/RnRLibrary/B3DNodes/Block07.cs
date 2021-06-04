@@ -54,7 +54,27 @@ namespace RnRLibrary.B3DNodes
         /// <inheritdoc />
         public override Transform ProcessNode(Transform parentTransform)
         {
-            throw new System.NotImplementedException();
+            Mesh usedMesh;
+
+            if (parentTransform.GetComponent<MeshFilter>() == null)
+            {
+                var meshFilter = parentTransform.gameObject.AddComponent<MeshFilter>();
+
+                meshFilter.sharedMesh = usedMesh = new Mesh();
+            }
+            else
+            {
+                usedMesh = parentTransform.GetComponent<MeshFilter>().sharedMesh;
+
+
+            }
+
+            for (int i = 0; i < Vertices.Count; i++)
+            {
+                
+            }
+
+            return parentTransform;
         }
 
         /// <inheritdoc />

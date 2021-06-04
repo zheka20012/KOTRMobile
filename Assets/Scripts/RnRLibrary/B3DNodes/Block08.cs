@@ -17,9 +17,14 @@ namespace RnRLibrary.B3DNodes
             Position = reader.ReadStruct<Vector3>();
             Radius = reader.ReadSingle();
 
-            var count = reader.ReadUInt32();
+            var indicesCount = reader.ReadUInt32();
 
+            Polygons = new Polygon[indicesCount];
 
+            for (int i = 0; i < indicesCount; i++)
+            {
+                Polygons[i] = reader.Read<Polygon>();
+            }
         }
 
         /// <inheritdoc />
@@ -31,15 +36,28 @@ namespace RnRLibrary.B3DNodes
                 return parentTransform;
             }
 
+            MeshFilter filter = parentTransform.GetComponent<MeshFilter>();
+
+            Mesh usedMesh = filter.sharedMesh;
+
+            for (int i = 0; i < Polygons.Length; i++)
+            {
+                Polygons[i].Parse(ref usedMesh);
+            }
+
+            filter.sharedMesh = usedMesh;
+
             return parentTransform;
         }
 
         /// <inheritdoc />
-        public Vector3 Position { get; set; }
+        public Vector3 Position { get; private set; }
 
         /// <inheritdoc />
-        public float Radius { get; set; }
-        
+        public float Radius { get; private set; }
+
+        public Polygon[] Polygons { get; private set; }
+
 
     }
 }

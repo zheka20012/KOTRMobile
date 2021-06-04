@@ -62,6 +62,10 @@ public class B3DFileTest : EditorWindow
             {
                 EditorGUILayout.BeginHorizontal();
                 IsOpened = EditorGUILayout.Foldout(IsOpened, $"{Node.Name} ({Node.GetType().Name})");
+                if (GUILayout.Button("Spawn", GUILayout.MaxWidth(30)))
+                {
+                    Node.ProcessNode(null);
+                }
                 IsShownValues = EditorGUILayout.ToggleLeft("Show Data", IsShownValues, GUILayout.MaxWidth(viewWidth/4));
                 EditorGUILayout.EndHorizontal();
 
@@ -89,6 +93,10 @@ public class B3DFileTest : EditorWindow
             {
                 EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.LabelField($"{Node.Name} ({Node.GetType().Name})", GUILayout.MaxWidth(viewWidth * 3/4));
+                if (GUILayout.Button("Spawn", GUILayout.MaxWidth(30)))
+                {
+                    Node.ProcessNode(null);
+                }
                 IsShownValues = EditorGUILayout.ToggleLeft("Show Data", IsShownValues, GUILayout.MaxWidth(viewWidth / 4));
                 EditorGUILayout.EndHorizontal();
 
