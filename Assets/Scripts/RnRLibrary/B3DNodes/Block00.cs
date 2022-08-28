@@ -17,7 +17,7 @@ namespace RnRLibrary.B3DNodes
         }
 
         /// <inheritdoc />
-        public override Transform ProcessNode(Transform parentTransform)
+        public override Transform ProcessNode(Transform parentTransform, B3DFile file)
         {
             return null;
         }

@@ -28,9 +28,11 @@ public class B3DFileTest : EditorWindow
 
         private bool IsOpened;
         private bool IsShownValues;
+        private B3DFile file;
 
-        public EditorBlockUI(INode node)
+        public EditorBlockUI(B3DFile file, INode node)
         {
+            this.file = file;
             if (node.GetType().IsSubclassOf(typeof(BaseGroupNode)))
             {
                 BaseGroupNode childRoot = node as BaseGroupNode;
@@ -39,7 +41,7 @@ public class B3DFileTest : EditorWindow
 
                 for (int i = 0; i < childRoot.ChildNodes.Count; i++)
                 {
-                    ChildNodes.Add(new EditorBlockUI(childRoot.ChildNodes[i]));
+                    ChildNodes.Add(new EditorBlockUI(file, childRoot.ChildNodes[i]));
                 }
             }
 
@@ -64,7 +66,7 @@ public class B3DFileTest : EditorWindow
                 IsOpened = EditorGUILayout.Foldout(IsOpened, $"{Node.Name} ({Node.GetType().Name})");
                 if (GUILayout.Button("Spawn", GUILayout.MaxWidth(30)))
                 {
-                    Node.ProcessNode(null);
+                    Node.ProcessNode(null, file);
                 }
                 IsShownValues = EditorGUILayout.ToggleLeft("Show Data", IsShownValues, GUILayout.MaxWidth(viewWidth/4));
                 EditorGUILayout.EndHorizontal();
@@ -95,7 +97,7 @@ public class B3DFileTest : EditorWindow
                 EditorGUILayout.LabelField($"{Node.Name} ({Node.GetType().Name})", GUILayout.MaxWidth(viewWidth * 3/4));
                 if (GUILayout.Button("Spawn", GUILayout.MaxWidth(30)))
                 {
-                    Node.ProcessNode(null);
+                    Node.ProcessNode(null, file);
                 }
                 IsShownValues = EditorGUILayout.ToggleLeft("Show Data", IsShownValues, GUILayout.MaxWidth(viewWidth / 4));
                 EditorGUILayout.EndHorizontal();
@@ -172,6 +174,7 @@ public class B3DFileTest : EditorWindow
 
     [SerializeField]
     private string FilePath = String.Empty;
+    [SerializeField]
     private B3DFile file;
 
     private bool MaterialsOpened = false;
@@ -201,7 +204,7 @@ public class B3DFileTest : EditorWindow
 
             for (int i = 0; i < file.Nodes.Count; i++)
             {
-                BlockUis.Add(new EditorBlockUI(file.Nodes[i]));
+                BlockUis.Add(new EditorBlockUI(file, file.Nodes[i]));
             }
         }
 
@@ -216,6 +219,16 @@ public class B3DFileTest : EditorWindow
             BlockUis = null;
             file = null;
             return;
+        }
+
+        if (GUILayout.Button("Spawn all Rooms"))
+        {
+            var roomNodes = file.GetNodesOfType<RoomNode>();
+
+            for (int i = 0; i < roomNodes.Length; i++)
+            {
+                roomNodes[i].ProcessNode(null, file);
+            }
         }
 
         MaterialsOpened = EditorGUILayout.Foldout(MaterialsOpened, "Materials");

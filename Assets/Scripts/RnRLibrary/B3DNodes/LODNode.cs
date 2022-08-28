@@ -1,13 +1,15 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using RnRLibrary.Utility;
 using UnityEngine;
 
 namespace RnRLibrary.B3DNodes
 {
-    public class Block12 : BaseGroupNode,IBoundingSphere
+    public class LODNode : BaseGroupNode, IBoundingSphere
     {
         /// <inheritdoc />
-        public Block12(NodeHeader header) : base(header)
+        public LODNode(NodeHeader header) : base(header)
         {
         }
 
@@ -17,19 +19,8 @@ namespace RnRLibrary.B3DNodes
             Position = reader.ReadVector3();
             Radius = reader.ReadSingle();
 
-            UNKNOWN = new float[4];
-
-            for (int i = 0; i < 4; i++)
-            {
-                UNKNOWN[i] = reader.ReadSingle();
-            }
-
-            UNKNOWN1 = new int[2];
-
-            for (int i = 0; i < 2; i++)
-            {
-                UNKNOWN1[i] = reader.ReadInt32();
-            }
+            TriggerOffset = reader.ReadVector3();
+            TriggerDistance = reader.ReadSingle();
 
             ReadChilds(reader);
         }
@@ -39,8 +30,8 @@ namespace RnRLibrary.B3DNodes
         {
             var _transform = this.CreateObject(parentTransform, false);
 
-            EnumTree(_transform, file);
-
+            EnumTree(parentTransform, file);
+            
             return _transform;
         }
 
@@ -50,8 +41,8 @@ namespace RnRLibrary.B3DNodes
         /// <inheritdoc />
         public float Radius { get; set; }
 
-        public float[] UNKNOWN { get; set; }
+        public Vector3 TriggerOffset { get; set; }
 
-        public int[] UNKNOWN1 { get; set; }
+        public float TriggerDistance { get; set; }
     }
 }

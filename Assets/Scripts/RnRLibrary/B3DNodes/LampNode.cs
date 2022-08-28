@@ -4,24 +4,31 @@ using UnityEngine;
 
 namespace RnRLibrary.B3DNodes
 {
-    public class Block33 : BaseGroupNode, IBoundingSphere
+    public class LampNode : BaseGroupNode, IBoundingSphere
     {
+        public enum LightType
+        {
+            Directional = 1,
+            Point = 2,
+            Spot = 3
+        }
+
         /// <inheritdoc />
-        public Block33(NodeHeader header) : base(header)
+        public LampNode(NodeHeader header) : base(header)
         {
         }
 
         /// <inheritdoc />
         public override void Read(BinaryReader reader)
         {
-            Position = reader.ReadStruct<Vector3>();
+            Position = reader.ReadVector3();
             Radius = reader.ReadSingle();
 
-            X = reader.ReadInt32();
+            UseLights = reader.ReadInt32() == 1;
             Y = reader.ReadInt32();
-            Z = reader.ReadInt32();
-
-            Position2 = reader.ReadStruct<Vector3>();
+            Type = (LightType)reader.ReadInt32();
+                
+            Position2 = reader.ReadVector3();
 
             Colors = new float[12];
 
@@ -34,9 +41,17 @@ namespace RnRLibrary.B3DNodes
         }
 
         /// <inheritdoc />
-        public override Transform ProcessNode(Transform parentTransform)
+        public override Transform ProcessNode(Transform parentTransform, B3DFile file)
         {
-            throw new System.NotImplementedException();
+            var  obj = this.CreateObject(parentTransform, false);
+
+            obj.transform.position = Position2;
+
+            obj.gameObject.AddComponent<Light>();
+
+            EnumTree(obj, file);
+
+            return obj;
         }
 
         /// <inheritdoc />
@@ -45,9 +60,9 @@ namespace RnRLibrary.B3DNodes
         /// <inheritdoc />
         public float Radius { get; set; }
 
-        public int X { get; set; }
+        public bool UseLights { get; set; }
         public int Y { get; set; }
-        public int Z { get; set; }
+        public LightType Type { get; set; }
 
         public Vector3 Position2 { get; set; }
         public float[] Colors { get; set; }

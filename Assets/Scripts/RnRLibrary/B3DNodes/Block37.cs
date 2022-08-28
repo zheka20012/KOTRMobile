@@ -18,7 +18,7 @@ namespace RnRLibrary.B3DNodes
         /// <inheritdoc />
         public override void Read(BinaryReader reader)
         {
-            Position = reader.ReadStruct<Vector3>();
+            Position = reader.ReadVector3();
             Radius = reader.ReadSingle();
 
             CollisionName = reader.Read32ByteString();
@@ -31,81 +31,81 @@ namespace RnRLibrary.B3DNodes
             {
                 case 2: //position + uv + normal
                     {
-                    vertices = new List<Vector3>();
-                    normals = new List<Vector3>();
-                    uv = new List<Vector2>();
+                        vertices = new List<Vector3>();
+                        normals = new List<Vector3>();
+                        uv = new List<Vector2>();
 
-                    for (int i = 0; i < vertexCount; i++)
-                    {
-                        vertices.Add(reader.ReadStruct<Vector3>());
-                        uv.Add(reader.ReadStruct<Vector2>());
-                        normals.Add(reader.ReadStruct<Vector3>());
+                        for (int i = 0; i < vertexCount; i++)
+                        {
+                            vertices.Add(reader.ReadVector3());
+                            uv.Add(reader.ReadStruct<Vector2>());
+                            normals.Add(reader.ReadVector3());
+                        }
+                        break;
                     }
-                    break;
-                }
                 case 3:
-                {
-                    vertices = new List<Vector3>();
-                    normals = new List<Vector3>();
-
-                    for (int i = 0; i < vertexCount; i++)
                     {
-                        vertices.Add(reader.ReadStruct<Vector3>());
-                        //uv.Add(reader.ReadStruct<Vector2>());
-                        normals.Add(reader.ReadStruct<Vector3>());
-                    }
-                }
-                break;
-                case 4: //position + uv
-                {
-                    vertices = new List<Vector3>();
-                    uv = new List<Vector2>();
+                        vertices = new List<Vector3>();
+                        normals = new List<Vector3>();
 
-                    for (int i = 0; i < vertexCount; i++)
-                    {
-                        vertices.Add(reader.ReadStruct<Vector3>());
-                        uv.Add(reader.ReadStruct<Vector2>());
-                        reader.ReadSingle();
+                        for (int i = 0; i < vertexCount; i++)
+                        {
+                            vertices.Add(reader.ReadVector3());
+                            //uv.Add(reader.ReadStruct<Vector2>());
+                            normals.Add(reader.ReadVector3());
+                        }
                     }
                     break;
-                }
+                case 4: //position + uv
+                    {
+                        vertices = new List<Vector3>();
+                        uv = new List<Vector2>();
+
+                        for (int i = 0; i < vertexCount; i++)
+                        {
+                            vertices.Add(reader.ReadVector3());
+                            uv.Add(reader.ReadStruct<Vector2>());
+                            reader.ReadSingle();
+                        }
+                        break;
+                    }
 
                 case 258:
                 case 515:
                     //position + uv + uv1 + normal
-                {
-                    vertices = new List<Vector3>();
-                    normals = new List<Vector3>();
-                    uv = new List<Vector2>();
-                    uv1 = new List<Vector2>();
-
-                    for (int i = 0; i < vertexCount; i++)
                     {
-                        vertices.Add(reader.ReadStruct<Vector3>());
-                        uv.Add(reader.ReadStruct<Vector2>());
-                        uv1.Add(reader.ReadStruct<Vector2>());
-                        normals.Add(reader.ReadStruct<Vector3>());
+                        vertices = new List<Vector3>();
+                        normals = new List<Vector3>();
+                        uv = new List<Vector2>();
+                        uv1 = new List<Vector2>();
+
+                        for (int i = 0; i < vertexCount; i++)
+                        {
+                            vertices.Add(reader.ReadVector3());
+                            uv.Add(reader.ReadStruct<Vector2>());
+                            uv1.Add(reader.ReadStruct<Vector2>());
+                            normals.Add(reader.ReadVector3());
+                        }
+                        break;
                     }
-                    break;
-                }
 
                 case 514: //position + uv + uv1 + unknown + normal
-                {
-                    vertices = new List<Vector3>();
-                    normals = new List<Vector3>();
-                    uv = new List<Vector2>();
-                    uv1 = new List<Vector2>();
-
-                    for (int i = 0; i < vertexCount; i++)
                     {
-                        vertices.Add(reader.ReadStruct<Vector3>());
-                        uv.Add(reader.ReadStruct<Vector2>());
-                        uv1.Add(reader.ReadStruct<Vector2>());
-                        reader.BaseStream.Seek(8, SeekOrigin.Current);
-                        normals.Add(reader.ReadStruct<Vector3>());
+                        vertices = new List<Vector3>();
+                        normals = new List<Vector3>();
+                        uv = new List<Vector2>();
+                        uv1 = new List<Vector2>();
+
+                        for (int i = 0; i < vertexCount; i++)
+                        {
+                            vertices.Add(reader.ReadVector3());
+                            uv.Add(reader.ReadStruct<Vector2>());
+                            uv1.Add(reader.ReadStruct<Vector2>());
+                            reader.BaseStream.Seek(8, SeekOrigin.Current);
+                            normals.Add(reader.ReadVector3());
+                        }
+                        break;
                     }
-                    break;
-                }
                 default:
                     break;
             }
@@ -114,38 +114,24 @@ namespace RnRLibrary.B3DNodes
         }
 
         /// <inheritdoc />
-        public override Transform ProcessNode(Transform parentTransform)
+        public override Transform ProcessNode(Transform parentTransform, B3DFile file)
         {
             Transform _transform = this.CreateObject(parentTransform, false);
 
-            var filter = _transform.gameObject.AddComponent<MeshFilter>();
-            var renderer = _transform.gameObject.AddComponent<MeshRenderer>();
-            renderer.sharedMaterial = new Material(Shader.Find("RnRBaseDiffuse"));
-
-            if (parentTransform != null && parentTransform.GetComponentInParent<LODGroup>() != null)
+            if (vertices != null)
             {
-               LOD[] lods = parentTransform.GetComponentInParent<LODGroup>().GetLODs();
+                var filter = _transform.gameObject.AddComponent<MeshFilter>();
+                var renderer = _transform.gameObject.AddComponent<MeshRenderer>();
+                renderer.sharedMaterial = new Material(Shader.Find("RnRBaseDiffuse"));
 
-               LOD lastLod = lods.Last();
+                filter.sharedMesh = new Mesh();
 
-               var renderers = lastLod.renderers.ToList();
-               renderers.Add(renderer);
-
-               lastLod.renderers = renderers.ToArray();
-
-               lods[lods.Length - 1] = lastLod;
-
-               parentTransform.GetComponentInParent<LODGroup>().SetLODs(lods);
-               parentTransform.GetComponentInParent<LODGroup>().RecalculateBounds();
+                filter.sharedMesh.SetVertices(vertices);
+                if (uv != null) filter.sharedMesh.uv = uv.ToArray();
+                if (normals != null) filter.sharedMesh.SetNormals(normals);
             }
 
-            filter.sharedMesh = new Mesh();
-
-            filter.sharedMesh.vertices = vertices.ToArray();
-            filter.sharedMesh.uv = uv.ToArray();
-            filter.sharedMesh.normals = normals.ToArray();
-
-            EnumTree(_transform);
+            EnumTree(_transform, file);
 
             return _transform;
         }

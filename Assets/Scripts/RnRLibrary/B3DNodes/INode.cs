@@ -9,6 +9,6 @@ namespace RnRLibrary.B3DNodes
 
         void Read(BinaryReader reader);
 
-        Transform ProcessNode(Transform parentTransform);
+        Transform ProcessNode(Transform parentTransform, B3DFile file);
     }
 }

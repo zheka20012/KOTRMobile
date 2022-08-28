@@ -86,13 +86,18 @@ namespace RnRLibrary
         {
             for (int i = 0; i < Nodes.Count; i++)
             {
-                if (Nodes[i].Name == name)
+                if (Nodes[i].Name.Contains(name))
                 {
                     return Nodes[i];
                 }
             }
 
             return null;
+        }
+
+        public T[] GetNodesOfType<T>() where T : INode
+        {
+            return Nodes.OfType<T>().ToArray();
         }
 
         public INode this[int index]

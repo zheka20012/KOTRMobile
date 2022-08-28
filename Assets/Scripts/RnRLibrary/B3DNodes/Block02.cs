@@ -17,7 +17,7 @@ namespace RnRLibrary.B3DNodes
         /// <inheritdoc />
         public override void Read(BinaryReader reader)
         {
-            Position = reader.ReadStruct<Vector3>();
+            Position = reader.ReadVector3();
             Radius = reader.ReadSingle();
 
             UNKNOWN = new float[4];
@@ -31,11 +31,11 @@ namespace RnRLibrary.B3DNodes
         }
 
         /// <inheritdoc />
-        public override Transform ProcessNode(Transform parentTransform)
+        public override Transform ProcessNode(Transform parentTransform, B3DFile file)
         {
            var obj = new GameObject(Name);
 
-           EnumTree(obj.transform);
+           EnumTree(obj.transform, file);
 
            return obj.transform;
         }

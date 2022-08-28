@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
+using UnityEngine;
 
 namespace RnRLibrary.Utility
 {
@@ -49,6 +50,11 @@ namespace RnRLibrary.Utility
             handle.Free();
 
             return result;
+        }
+
+        public static Vector3 ReadVector3(this BinaryReader reader)
+        {
+            return new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle()).FlipYZ();
         }
 
         public static T Read<T>(this BinaryReader reader) where T : IBinaryReadable, new()

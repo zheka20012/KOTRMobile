@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using RnRLibrary.Utility;
 using UnityEngine;
 
@@ -17,7 +18,7 @@ namespace RnRLibrary.B3DNodes
         /// <inheritdoc />
         public override void Read(BinaryReader reader)
         {
-            Position = reader.ReadStruct<Vector3>();
+            Position = reader.ReadVector3();
             Radius = reader.ReadSingle();
 
             reader.ReadUInt32();
@@ -35,7 +36,7 @@ namespace RnRLibrary.B3DNodes
         }
 
         /// <inheritdoc />
-        public override Transform ProcessNode(Transform parentTransform)
+        public override Transform ProcessNode(Transform parentTransform, B3DFile file)
         {
             if (parentTransform.GetComponent<MeshFilter>() == null) // We not found mesh filter, that's wrong
             {
@@ -47,14 +48,31 @@ namespace RnRLibrary.B3DNodes
 
             Mesh usedMesh = filter.sharedMesh;
 
-            for (int i = 0; i < Polygons.Length; i++)
+            if (usedMesh.subMeshCount == 0)
             {
-                Polygons[i].Parse(ref usedMesh);
+                usedMesh.subMeshCount = 1;
             }
 
+            int subMeshIndex = usedMesh.subMeshCount - 1;
+
+            for (int i = 0; i < Polygons.Length; i++)
+            {
+                Polygons[i].Parse(ref usedMesh, subMeshIndex);
+            }
+
+            usedMesh.subMeshCount++;
+
+            var renderer = parentTransform.GetComponent<MeshRenderer>();
+
+            var materials = renderer.sharedMaterials.ToList();
+
+            materials.Add(materials[materials.Count - 1]);
+
+            renderer.sharedMaterials = materials.ToArray();
+
+            usedMesh.RecalculateBounds();
+
             filter.sharedMesh = usedMesh;
-            filter.sharedMesh.RecalculateNormals();
-            filter.sharedMesh.RecalculateBounds();
 
             return parentTransform;
         }

@@ -17,7 +17,7 @@ namespace RnRLibrary.B3DNodes
         /// <inheritdoc />
         public override void Read(BinaryReader reader)
         {
-            Position = reader.ReadStruct<Vector3>();
+            Position = reader.ReadVector3();
             Radius = reader.ReadSingle();
 
             Name1 = reader.Read32ByteString();
@@ -37,9 +37,9 @@ namespace RnRLibrary.B3DNodes
 
                     for (int i = 0; i < vertexCount; i++)
                     {
-                        vertices.Add(reader.ReadStruct<Vector3>());
+                        vertices.Add(reader.ReadVector3());
                         uv.Add(reader.ReadStruct<Vector2>());
-                        normals.Add(reader.ReadStruct<Vector3>());
+                        normals.Add(reader.ReadVector3());
                     }
                     break;
                 }
@@ -50,9 +50,9 @@ namespace RnRLibrary.B3DNodes
 
                     for (int i = 0; i < vertexCount; i++)
                     {
-                        vertices.Add(reader.ReadStruct<Vector3>());
+                        vertices.Add(reader.ReadVector3());
                         //uv.Add(reader.ReadStruct<Vector2>());
-                        normals.Add(reader.ReadStruct<Vector3>());
+                        normals.Add(reader.ReadVector3());
                     }
                 }
                 break;
@@ -63,7 +63,7 @@ namespace RnRLibrary.B3DNodes
 
                     for (int i = 0; i < vertexCount; i++)
                     {
-                        vertices.Add(reader.ReadStruct<Vector3>());
+                        vertices.Add(reader.ReadVector3());
                         uv.Add(reader.ReadStruct<Vector2>());
                         reader.ReadSingle();
                     }
@@ -81,10 +81,10 @@ namespace RnRLibrary.B3DNodes
 
                     for (int i = 0; i < vertexCount; i++)
                     {
-                        vertices.Add(reader.ReadStruct<Vector3>());
+                        vertices.Add(reader.ReadVector3());
                         uv.Add(reader.ReadStruct<Vector2>());
                         uv1.Add(reader.ReadStruct<Vector2>());
-                        normals.Add(reader.ReadStruct<Vector3>());
+                        normals.Add(reader.ReadVector3());
                     }
                     break;
                 }
@@ -98,11 +98,11 @@ namespace RnRLibrary.B3DNodes
 
                     for (int i = 0; i < vertexCount; i++)
                     {
-                        vertices.Add(reader.ReadStruct<Vector3>());
+                        vertices.Add(reader.ReadVector3());
                         uv.Add(reader.ReadStruct<Vector2>());
                         uv1.Add(reader.ReadStruct<Vector2>());
                         reader.BaseStream.Seek(8, SeekOrigin.Current);
-                        normals.Add(reader.ReadStruct<Vector3>());
+                        normals.Add(reader.ReadVector3());
                     }
                     break;
                 }
@@ -112,7 +112,7 @@ namespace RnRLibrary.B3DNodes
         }
 
         /// <inheritdoc />
-        public override Transform ProcessNode(Transform parentTransform)
+        public override Transform ProcessNode(Transform parentTransform, B3DFile file)
         {
             throw new System.NotImplementedException();
         }

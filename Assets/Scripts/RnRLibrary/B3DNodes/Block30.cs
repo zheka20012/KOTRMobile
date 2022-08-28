@@ -15,20 +15,20 @@ namespace RnRLibrary.B3DNodes
         /// <inheritdoc />
         public override void Read(BinaryReader reader)
         {
-            Position = reader.ReadStruct<Vector3>();
+            Position = reader.ReadVector3();
             Radius = reader.ReadSingle();
 
             RoomName = reader.Read32ByteString();
 
-            Point1 = reader.ReadStruct<Vector3>();
-            Point2 = reader.ReadStruct<Vector3>();
+            Point1 = reader.ReadVector3();
+            Point2 = reader.ReadVector3();
 
         }
 
         /// <inheritdoc />
-        public override Transform ProcessNode(Transform parentTransform)
+        public override Transform ProcessNode(Transform parentTransform, B3DFile file)
         {
-            throw new System.NotImplementedException();
+            return this.CreateObject(parentTransform);
         }
 
         /// <inheritdoc />

@@ -4,33 +4,37 @@ using UnityEngine;
 
 namespace RnRLibrary.B3DNodes
 {
-    public class Block05 : BaseGroupNode, IBoundingSphere
+    public class ContainerNode : BaseGroupNode, IBoundingSphere
     {
 
-        public string OtherName;
+        public string SpawnNodeName;
         /// <inheritdoc />
         public override void Read(BinaryReader reader)
         {
-            Position = reader.ReadStruct<Vector3>();
+            Position = reader.ReadVector3();
             Radius = reader.ReadSingle();
-            OtherName = reader.Read32ByteString();
+            SpawnNodeName = reader.Read32ByteString();
 
 
             ReadChilds(reader);
         }
 
         /// <inheritdoc />
-        public override Transform ProcessNode(Transform parentTransform)
+        public override Transform ProcessNode(Transform parentTransform, B3DFile file)
         {
             var _transform = this.CreateObject(parentTransform);
 
-            EnumTree(_transform);
+            INode nodeToSpawn = file.Find(SpawnNodeName);
+
+            nodeToSpawn.ProcessNode(_transform, file);
+
+            EnumTree(_transform, file);
 
             return _transform;
         }
 
         /// <inheritdoc />
-        public Block05(NodeHeader header) : base(header)
+        public ContainerNode(NodeHeader header) : base(header)
         {
         }
 

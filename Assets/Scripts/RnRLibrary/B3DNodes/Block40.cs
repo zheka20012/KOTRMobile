@@ -14,7 +14,7 @@ namespace RnRLibrary.B3DNodes
         /// <inheritdoc />
         public override void Read(BinaryReader reader)
         {
-            Position = reader.ReadStruct<Vector3>();
+            Position = reader.ReadVector3();
             Radius = reader.ReadSingle();
 
             Empty = reader.Read32ByteString();
@@ -32,10 +32,11 @@ namespace RnRLibrary.B3DNodes
             }
         }
 
+        //TODO: implement tree generators
         /// <inheritdoc />
-        public override Transform ProcessNode(Transform parentTransform)
+        public override Transform ProcessNode(Transform parentTransform, B3DFile file)
         {
-            throw new System.NotImplementedException();
+            return parentTransform;
         }
 
         public string Empty { get; set; }

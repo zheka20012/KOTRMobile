@@ -8,24 +8,6 @@ namespace RnRLibrary.B3DNodes
     //3d-Object node
     public class Block07 : BaseGroupNode, IBoundingSphere
     {
-        public struct Vertex
-        {
-            public Vector3 Position;
-            public Vector2 Uv;
-
-            public Vertex(BinaryReader reader)
-            {
-                Position = reader.ReadStruct<Vector3>();
-                Uv = reader.ReadStruct<Vector2>();
-            }
-
-            /// <inheritdoc />
-            public override string ToString()
-            {
-                return $"pos:{Position}, uv={Uv}";
-            }
-        }
-
         /// <inheritdoc />
         public Block07(NodeHeader header) : base(header)
         {
@@ -34,45 +16,45 @@ namespace RnRLibrary.B3DNodes
         /// <inheritdoc />
         public override void Read(BinaryReader reader)
         {
-            Position = reader.ReadStruct<Vector3>();
+            Position = reader.ReadVector3();
             Radius = reader.ReadSingle();
 
             ObjectName = reader.Read32ByteString();
 
             int vertexCount = reader.ReadInt32();
 
-            Vertices = new List<Vertex>();
+            Vertices = new List<Vector3>();
+            UVs = new List<Vector2>();
 
             for (int i = 0; i < vertexCount; i++)
             {
-                Vertices.Add(new Vertex(reader));
+                Vertices.Add(reader.ReadVector3());
+                UVs.Add(reader.ReadStruct<Vector2>());
             }
 
             ReadChilds(reader);
         }
 
         /// <inheritdoc />
-        public override Transform ProcessNode(Transform parentTransform)
+        public override Transform ProcessNode(Transform parentTransform, B3DFile file)
         {
-            Mesh usedMesh;
+            Transform _transform = this.CreateObject(parentTransform, false);
 
-            if (parentTransform.GetComponent<MeshFilter>() == null)
+            if (Vertices != null)
             {
-                var meshFilter = parentTransform.gameObject.AddComponent<MeshFilter>();
+                var filter = _transform.gameObject.AddComponent<MeshFilter>();
+                var renderer = _transform.gameObject.AddComponent<MeshRenderer>();
+                renderer.sharedMaterial = new Material(Shader.Find("RnRBaseDiffuse"));
 
-                meshFilter.sharedMesh = usedMesh = new Mesh();
+                Mesh newMesh = new Mesh();
+
+                newMesh.SetVertices(Vertices);
+                newMesh.SetUVs(0, UVs);
+
+                filter.sharedMesh = newMesh;
             }
-            else
-            {
-                usedMesh = parentTransform.GetComponent<MeshFilter>().sharedMesh;
 
-
-            }
-
-            for (int i = 0; i < Vertices.Count; i++)
-            {
-                
-            }
+            EnumTree(_transform, file);
 
             return parentTransform;
         }
@@ -85,6 +67,7 @@ namespace RnRLibrary.B3DNodes
 
         public string ObjectName { get; set; }
 
-        public List<Vertex> Vertices { get; set; }
+        public List<Vector3> Vertices { get; set; }
+        public List<Vector2> UVs { get; set; }
     }
 }

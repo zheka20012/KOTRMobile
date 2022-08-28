@@ -1,10 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using RnRLibrary.Utility;
 using UnityEngine;
 
 namespace RnRLibrary.B3DNodes
 {
+    /// <summary>
+    /// Object Collision parameters
+    /// </summary>
     public class Block23 : BaseNode
     {
         public struct Polygon : IBinaryReadable
@@ -14,13 +18,22 @@ namespace RnRLibrary.B3DNodes
             /// <inheritdoc />
             public void Read(BinaryReader reader)
             {
-                uint vertexCount = reader.ReadUInt32();
+                uint submeshCount = reader.ReadUInt32();
                 Vertices = new List<Vector3>();
 
-                for (int i = 0; i < vertexCount; i++)
+                for (int i = 0; i < submeshCount; i++)
                 {
-                    Vertices.Add(reader.ReadStruct<Vector3>());
+                    Vertices.Add(reader.ReadVector3());
                 }
+            }
+
+            public void ParseMesh(ref Mesh mesh)
+            {
+                List<Vector3> vertices = mesh.vertices.ToList();
+
+                vertices.AddRange(Vertices);
+
+                mesh.vertices = vertices.ToArray();
             }
         }
 
@@ -57,9 +70,35 @@ namespace RnRLibrary.B3DNodes
         }
 
         /// <inheritdoc />
-        public override Transform ProcessNode(Transform parentTransform)
+        public override Transform ProcessNode(Transform parentTransform, B3DFile file)
         {
-            throw new System.NotImplementedException();
+            MeshCollider _collider = parentTransform.gameObject.GetOrAddComponent<MeshCollider>();
+
+            Mesh workMesh = _collider.sharedMesh ? _collider.sharedMesh : new Mesh();
+
+            workMesh.subMeshCount++;
+
+            int subMesh = workMesh.subMeshCount - 1;
+
+            for (int i = 0; i < Polygons.Count; i++)
+            {
+                Polygons[i].ParseMesh(ref workMesh);
+            }
+
+            int[] tris = new int[workMesh.vertexCount];
+
+            int num = 0;
+
+            for (int i = 0; i < workMesh.vertexCount; i++)
+            {
+                tris[i] = num++;
+            }
+
+            workMesh.SetIndices(tris, MeshTopology.Quads, subMesh);
+
+            _collider.sharedMesh = workMesh;
+
+            return parentTransform;
         }
 
         public uint UNKNOWN { get; set; }

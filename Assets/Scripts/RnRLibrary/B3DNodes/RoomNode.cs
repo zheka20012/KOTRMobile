@@ -3,23 +3,27 @@ using UnityEngine;
 
 namespace RnRLibrary.B3DNodes
 {
-    public class Block14 : BaseNode
+    public class RoomNode : BaseGroupNode
     {
         /// <inheritdoc />
-        public Block14(NodeHeader header) : base(header)
+        public RoomNode(NodeHeader header) : base(header)
         {
         }
 
         /// <inheritdoc />
         public override void Read(BinaryReader reader)
         {
-            reader.BaseStream.Seek(11 * 4, SeekOrigin.Current);
+            ReadChilds(reader);
         }
 
         /// <inheritdoc />
         public override Transform ProcessNode(Transform parentTransform, B3DFile file)
         {
-            return parentTransform;
+            var _transform = this.CreateObject(parentTransform);
+
+            EnumTree(_transform, file);
+
+            return _transform;
         }
     }
 }

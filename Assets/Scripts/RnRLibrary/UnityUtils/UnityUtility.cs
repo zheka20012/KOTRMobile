@@ -23,9 +23,19 @@ namespace RnRLibrary
                 }
             }
 
-            _transform.SetParent(parent, setPosition);
+            _transform.SetParent(parent, true);
 
             return _transform;
+        }
+
+        public static T GetOrAddComponent<T>(this GameObject gameObject) where T: Component
+        {
+            return gameObject.GetComponent<T>() == null ? gameObject.AddComponent<T>() : gameObject.GetComponent<T>();
+        }
+
+        public static T GetOrAddComponent<T>(this Transform transform) where T : Component
+        {
+            return transform.GetComponent<T>() == null ? transform.gameObject.AddComponent<T>() : transform.GetComponent<T>();
         }
     }
 }

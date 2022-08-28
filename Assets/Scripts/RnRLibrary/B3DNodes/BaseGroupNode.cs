@@ -42,13 +42,13 @@ namespace RnRLibrary.B3DNodes
         }
 
         /// <inheritdoc />
-        public abstract Transform ProcessNode(Transform parentTransform);
+        public abstract Transform ProcessNode(Transform parentTransform, B3DFile file);
 
-        public void EnumTree(Transform parentTransform)
+        public void EnumTree(Transform parentTransform, B3DFile file)
         {
             for (int i = 0; i < ChildNodes.Count; i++)
             {
-                ChildNodes[i].ProcessNode(parentTransform);
+                ChildNodes[i].ProcessNode(parentTransform, file);
             }
         }
 

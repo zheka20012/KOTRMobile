@@ -14,7 +14,7 @@ namespace RnRLibrary.B3DNodes
         /// <inheritdoc />
         public override void Read(BinaryReader reader)
         {
-            Position = reader.ReadStruct<Vector3>();
+            Position = reader.ReadVector3();
             Radius = reader.ReadSingle();
 
             Count = reader.ReadUInt32();
@@ -25,9 +25,13 @@ namespace RnRLibrary.B3DNodes
         }
 
         /// <inheritdoc />
-        public override Transform ProcessNode(Transform parentTransform)
+        public override Transform ProcessNode(Transform parentTransform, B3DFile file)
         {
-            throw new System.NotImplementedException();
+            var _transform = this.CreateObject(parentTransform, false);
+
+            EnumTree(_transform, file);
+
+            return _transform;
         }
 
         /// <inheritdoc />

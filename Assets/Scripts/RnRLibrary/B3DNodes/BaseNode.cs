@@ -19,7 +19,7 @@ namespace RnRLibrary.B3DNodes
         public abstract void Read(BinaryReader reader);
 
         /// <inheritdoc />
-        public abstract Transform ProcessNode(Transform parentTransform);
+        public abstract Transform ProcessNode(Transform parentTransform, B3DFile file);
 
         private static Dictionary<uint, Type> NodeTypes = new Dictionary<uint, Type>()
         {
@@ -28,15 +28,16 @@ namespace RnRLibrary.B3DNodes
             {2, typeof(Block02) },
             {3, typeof(Block03) },
             {4, typeof(Block04) },
-            {5, typeof(Block05) },
+            {5, typeof(ContainerNode) },
             {7, typeof(Block07) },
             {8, typeof(Block08) },
-            {9, typeof(Block09) },
-            {10, typeof(Block10) },
+            {9, typeof(LODNode) },
+            {10, typeof(LODNode) },
             {12, typeof(Block12) },
+            {13, typeof(TriggerNode) },
             {14, typeof(Block14) },
             {18, typeof(Block18) },
-            {19, typeof(Block19) },
+            {19, typeof(RoomNode) },
             {20, typeof(Block20) },
             {21, typeof(Block21) },
             {23, typeof(Block23) },
@@ -44,7 +45,7 @@ namespace RnRLibrary.B3DNodes
             {25, typeof(Block25) },
             {29, typeof(NotImplementedGroupNode) },
             {30, typeof(Block30) },
-            {33, typeof(Block33) },
+            {33, typeof(LampNode) },
             {35, typeof(Block35) },
             {36, typeof(Block36) },
             {37, typeof(Block37) },

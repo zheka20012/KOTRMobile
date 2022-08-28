@@ -21,10 +21,10 @@ namespace RnRLibrary.B3DNodes
 
             for (int i = 0; i < 3; i++)
             {
-                Matrix[i] = reader.ReadStruct<Vector3>();
+                Matrix[i] = reader.ReadVector3();
             }
 
-            Position = reader.ReadStruct<Vector3>();
+            Position = reader.ReadVector3();
 
             IsShown = reader.ReadInt32();
 
@@ -32,11 +32,11 @@ namespace RnRLibrary.B3DNodes
         }
 
         /// <inheritdoc />
-        public override Transform ProcessNode(Transform parentTransform)
+        public override Transform ProcessNode(Transform parentTransform, B3DFile file)
         {
             Transform obj = this.CreateObject(parentTransform);
 
-            EnumTree(obj);
+            EnumTree(obj, file);
 
             return parentTransform;
         }
