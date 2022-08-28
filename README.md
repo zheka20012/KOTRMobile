@@ -5,4 +5,4 @@ The main focus is to make this game cross-platform and able to run all formats f
 
 ## Installation
 
-This project is created in Unity 2018.4.21f1 LTS, stable work on earlier versions is not guaranteed.
+This project is created in Unity 2020.3.14f1 LTS, stable work on earlier versions is not guaranteed.
